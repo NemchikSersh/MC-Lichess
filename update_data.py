@@ -14,15 +14,25 @@ def get_team_tournaments():
     return tournaments[:50] # Берем последние 50 турниров
 
 def fetch_full_data(t_id):
-    # Получаем результаты конкретного турнира
+    # Получаем детали турнира
     info = requests.get(f"https://lichess.org/api/tournament/{t_id}").json()
+    
+    # Проверяем, это межклубная битва (Team Battle) или внутренний турнир
+    is_team_battle = 'teamBattle' in info
+    
+    # Получаем результаты
     results_text = requests.get(f"https://lichess.org/api/tournament/{t_id}/results").text
     results = [json.loads(l) for l in results_text.strip().split('\n') if l]
     
-    team_results = [
-        {'u': p['username'], 's': p['score'], 'r': p['rank']}
-        for p in results if p.get('team', '').lower() == TEAM_ID.lower()
-    ]
+    team_results = []
+    for p in results:
+        if is_team_battle:
+            # В командной битве берем только игроков нашего клуба
+            if p.get('team', '').lower() == TEAM_ID.lower():
+                team_results.append({'u': p['username'], 's': p['score'], 'r': p['rank']})
+        else:
+            # Во внутреннем турнире клуба берем всех участников
+            team_results.append({'u': p['username'], 's': p['score'], 'r': p['rank']})
     
     return {
         'id': t_id,
