@@ -17,7 +17,10 @@ jobs:
           python-version: '3.x'
       - name: Install dependencies
         run: pip install requests
-      - name: Run update script
+     - name: Run update script
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
         run: python update_data.py
       - name: Commit and push if changed
         run: |
