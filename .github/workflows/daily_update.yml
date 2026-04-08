@@ -23,4 +23,5 @@ jobs:
           git config --global user.email 'bot@github.com'
           git add index.html
           git commit -m "Auto-update stats" || exit 0
+          git pull --rebase origin main
           git push
