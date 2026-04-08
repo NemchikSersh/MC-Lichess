@@ -99,7 +99,7 @@ print("Данные сохранены.")
 today = datetime.datetime.utcnow().weekday()
 
 # Отправляем сообщение по Пн (0), Ср (2 - временно для теста сегодня), Чт (3) и Вс (6)
-if today in [0, 2, 3, 6]: 
+if today in [0, 3, 6]: 
     print("Отправляю уведомление в Telegram...")
     send_telegram_message()
 else:
