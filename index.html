@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лига Достижений Lichess - 43TISSDh</title>
+    <style>
+        :root {
+            --color-bg-base: #0f172a;
+            --color-bg-elevated: #1e293b;
+            --color-bg-surface: #334155;
+            --color-text-primary: #f1f5f9;
+            --color-text-secondary: #cbd5e1;
+            --color-text-muted: #94a3b8;
+            --color-primary: #38bdf8;
+            --color-primary-hover: #0ea5e9;
+            --color-success: #22c55e;
+            --color-warning: #f59e0b;
+            --color-error: #ef4444;
+            --color-border: rgba(148, 163, 184, 0.2);
+            --color-gold: #d4af37;
+            --color-silver: #c0c0c0;
+            --color-bronze: #cd7f32;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; background: var(--color-bg-base); color: var(--color-text-primary); padding: 20px; line-height: 1.6; }
+        
+        /* Водяной знак с логотипом на фоне */
+        .logo-watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70vw;
+            height: 70vh;
+            max-width: 550px;
+            max-height: 550px;
+            background-image: url('logo.jpg'); 
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.15; 
+            pointer-events: none; 
+            z-index: 9999; 
+            mix-blend-mode: screen; 
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; position: relative; }
+        header, .card { background: var(--color-bg-elevated); padding: 20px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        
+        /* Стили для шапки с логотипом */
+        .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .header-title-container { display: flex; align-items: center; gap: 15px; }
+        .header-logo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 12px rgba(56, 189, 248, 0.4); border: 2px solid var(--color-bg-surface); }
+        
+        .team-badge { background: var(--color-bg-surface); padding: 6px 12px; border-radius: 6px; font-size: 14px; display: inline-block; margin-right: 10px; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; }
+        
+        input[type="date"], select { 
+            background: var(--color-bg-surface); border: 1px solid var(--color-border); 
+            color: white; padding: 10px; border-radius: 8px; flex: 1; min-width: 150px; 
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+        
+        .cb-container { display: flex; align-items: center; cursor: pointer; user-select: none; }
+        .cb-container input[type="checkbox"] { 
+            width: 18px; height: 18px; margin: 0 10px 0 0; padding: 0; 
+            flex: none; min-width: auto; cursor: pointer; accent-color: var(--color-primary); 
+        }
+        
+        button { border: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 14px; }
+        .btn-secondary { background: var(--color-bg-surface); color: white; }
+        .btn-secondary:hover { background: #475569; }
+        .tabs { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 1px solid var(--color-border); overflow-x: auto; }
+        .tab { background: transparent; color: var(--color-text-muted); border-bottom: 2px solid transparent; border-radius: 0; padding: 10px 15px; }
+        .tab.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--color-border); }
+        th { color: var(--color-text-muted); font-size: 12px; text-transform: uppercase; }
+        .points { color: var(--color-success); font-weight: bold; }
+        .medal-gold { color: var(--color-gold); font-weight: bold; }
+        .medal-silver { color: var(--color-silver); font-weight: bold; }
+        .medal-bronze { color: var(--color-bronze); font-weight: bold; }
+        .tournament-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--color-bg-surface); border-radius: 8px; margin-bottom: 8px; }
+        
+        .player-link { color: var(--color-primary); text-decoration: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .player-link:hover { color: var(--color-primary-hover); text-decoration: underline; }
+        .tourney-link { color: var(--color-primary); text-decoration: none; font-weight: bold; transition: 0.2s; }
+        .tourney-link:hover { color: var(--color-primary-hover); text-decoration: underline; }
+
+        /* --- Стили для пьедестала --- */
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin: 20px 0 30px 0; }
+        .podium-place { 
+            background: var(--color-bg-surface); 
+            border-radius: 12px; padding: 15px; 
+            text-align: center; flex: 1; 
+            max-width: 180px; border: 2px solid transparent; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .place-1 { order: 2; min-height: 160px; border-color: var(--color-gold); transform: scale(1.05); }
+        .place-2 { order: 1; min-height: 140px; border-color: var(--color-silver); }
+        .place-3 { order: 3; min-height: 130px; border-color: var(--color-bronze); }
+        .podium-rank { font-size: 28px; display: block; margin-bottom: 5px; }
+        .podium-name { font-weight: bold; display: block; margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    </style>
+</head>
+<body>
+
+<div class="logo-watermark"></div>
+
+<div class="container">
+    <header>
+        <div class="header-top">
+            <div class="header-title-container">
+                <img src="logo.jpg" alt="Логотип" class="header-logo">
+                <h1 style="margin: 0;">🏆 Лига Достижений Lichess</h1>
+            </div>
+            <div>
+                <div class="team-badge">Команда: <strong>43TISSDh</strong></div>
+                <div class="team-badge">ID: <strong>43TISSDh</strong></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="tabs">
+        <button class="tab active" onclick="openTab(event, 'view-main')">Обзор</button>
+        <button class="tab" onclick="openTab(event, 'view-list')">Турниры</button>
+        <button class="tab" onclick="openTab(event, 'view-rating')">Рейтинг</button>
+        <button class="tab" onclick="openTab(event, 'view-podium')">🥇 Пьедестал Клуба</button>
+        <button class="tab" onclick="openTab(event, 'view-player')">По игроку</button>
+    </div>
+
+    <div id="view-main" class="tab-content active">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+            <div class="card"><h3>Очки команды</h3><div id="stat-pts" style="font-size:32px;">0</div></div>
+            <div class="card"><h3>Турниры (активные)</h3><div id="stat-t" style="font-size:32px;">0</div></div>
+            <div class="card"><h3>Активные игроки</h3><div id="stat-p" style="font-size:32px;">0</div></div>
+        </div>
+    </div>
+
+    <div id="view-list" class="tab-content">
+        <div class="card" id="list-t"></div>
+    </div>
+
+    <div id="view-rating" class="tab-content">
+        <div class="card" style="padding: 15px; margin-bottom: 15px;">
+            <div class="input-group" style="align-items: flex-start;">
+                <span style="color: var(--color-text-muted); font-size: 13px; margin-top: 10px;">ВИД ТУРНИРА:</span>
+                <div id="filterType" style="display: flex; flex-wrap: wrap; gap: 10px; flex: 1;">
+                    </div>
+            </div>
+            <div class="input-group" style="margin-bottom: 0;">
+                <span style="color: var(--color-text-muted); font-size: 13px;">ПЕРИОД:</span>
+                <label for="dateFrom">С</label>
+                <input type="date" id="dateFrom" onchange="handleFilterChange()">
+                <label for="dateTo">По</label>
+                <input type="date" id="dateTo" onchange="handleFilterChange()">
+                <button class="btn-secondary" onclick="resetFilters()">Сброс</button>
+            </div>
+        </div>
+        <div class="card" id="list-r"></div>
+    </div>
+
+    <div id="view-podium" class="tab-content">
+        <div class="card">
+            <h3>Зачет по медалям ВНУТРИ КЛУБА</h3>
+            <p style="color: var(--color-text-muted); font-size: 13px; margin-bottom: 15px;">Учитываются 1, 2 и 3 места только среди членов команды "43TISSDh".</p>
+            <div id="list-podium"></div>
+        </div>
+    </div>
+
+    <div id="view-player" class="tab-content">
+        <div class="card">
+            <select id="sel-p" onchange="showPlayerStats()" style="width:100%; margin-bottom:20px;">
+                <option value="">-- Выберите игрока --</option>
+            </select>
+            <div id="player-res"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+const TEAM = '43TISSDh';
+let data = []; // СЮДА БУДЕТ ВСТАВЛЯТЬ ДАННЫЕ PYTHON СКРИПТ
+let players = {}; 
+
+function sortData() {
+    if (!Array.isArray(data)) return;
+    data.sort((a, b) => {
+        const timeA = (a && a.d) ? new Date(a.d).getTime() : 0;
+        const timeB = (b && b.d) ? new Date(b.d).getTime() : 0;
+        return timeB - timeA;
+    });
+}
+
+window.onload = () => {
+    sortData();
+    const sFrom = localStorage.getItem('lic_filter_from');
+    const sTo = localStorage.getItem('lic_filter_to');
+    if(sFrom) document.getElementById('dateFrom').value = sFrom;
+    if(sTo) document.getElementById('dateTo').value = sTo;
+    
+    updateTypeSelector();
+    refresh();
+};
+
+function updateTypeSelector() {
+    const container = document.getElementById('filterType');
+    let selected = [];
+    try { 
+        const stored = localStorage.getItem('lic_filter_type_multi');
+        if (stored) selected = JSON.parse(stored);
+        if (!Array.isArray(selected)) selected = [];
+    } catch(e) { selected = []; }
+    
+    const types = new Set();
+    data.forEach(t => {
+        if (!t || !t.n) return;
+        if (t.n.includes('Lichess Liga')) types.add('Lichess Liga');
+        else if (t.n.includes('Lichess Mega')) types.add('Lichess Mega');
+        else if (t.n.includes('Rapid League')) types.add('Rapid League');
+        else if (t.n.includes('Дружественный межклубный')) types.add('Дружественный межклубный'); 
+        else types.add(t.n.split(' #')[0].split(' 第')[0]);
+    });
+    
+    let html = '';
+    Array.from(types).sort().forEach(type => {
+        const isChecked = selected.includes(type) ? 'checked' : '';
+        const safeType = type.replace(/"/g, '&quot;');
+        html += `<label class="cb-container" style="background: var(--color-bg-base); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--color-border); white-space: nowrap;">
+            <input type="checkbox" value="${safeType}" ${isChecked} onchange="handleFilterChange()">
+            <div style="font-size: 13px;">${type}</div>
+        </label>`;
+    });
+    container.innerHTML = html || '<span style="color:var(--color-text-muted); font-size:13px; margin-top:8px;">Нет турниров для фильтрации</span>';
+}
+
+function handleFilterChange() {
+    localStorage.setItem('lic_filter_from', document.getElementById('dateFrom').value);
+    localStorage.setItem('lic_filter_to', document.getElementById('dateTo').value);
+    
+    const checkboxes = document.querySelectorAll('#filterType input[type="checkbox"]:checked');
+    const selectedTypes = Array.from(checkboxes).map(cb => cb.value);
+    localStorage.setItem('lic_filter_type_multi', JSON.stringify(selectedTypes));
+    
+    refresh();
+}
+
+function resetFilters() {
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
+    document.querySelectorAll('#filterType input[type="checkbox"]').forEach(cb => cb.checked = false);
+    handleFilterChange();
+}
+
+function openTab(e, id) {
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    if(e) {
+        e.currentTarget.classList.add('active');
+    } else {
+        const btn = Array.from(document.querySelectorAll('.tab')).find(b => b.getAttribute('onclick') && b.getAttribute('onclick').includes(id));
+        if(btn) btn.classList.add('active');
+    }
+}
+
+function selectPlayerFromTable(username) {
+    openTab(null, 'view-player');
+    document.getElementById('sel-p').value = username;
+    showPlayerStats();
+}
+
+function refresh() {
+    players = {};
+    const fromDate = document.getElementById('dateFrom').value;
+    const toDate = document.getElementById('dateTo').value;
+    
+    let typeFilters = [];
+    try { 
+        const stored = localStorage.getItem('lic_filter_type_multi');
+        if (stored) typeFilters = JSON.parse(stored);
+        if (!Array.isArray(typeFilters)) typeFilters = [];
+    } catch(e) { typeFilters = []; }
+
+    let activeCount = 0;
+    let totalScore = 0;
+
+    data.forEach((t, idx) => {
+        if (!t || !t.n || t.disabled) return;
+        
+        if (typeFilters.length > 0) {
+            const matchesType = typeFilters.some(type => t.n.includes(type));
+            if (!matchesType) return;
+        }
+        
+        let tDate = '';
+        if (t.d) {
+            tDate = t.d.split('T')[0];
+            if (fromDate && tDate < fromDate) return;
+            if (toDate && tDate > toDate) return;
+        }
+
+        activeCount++;
+        totalScore += t.pts;
+        const sortedInClub = [...(t.p || [])].sort((a, b) => b.s - a.s);
+        sortedInClub.forEach((p, index) => {
+            if (!players[p.u]) players[p.u] = { s: 0, c: 0, t: [], m1: 0, m2: 0, m3: 0 };
+            players[p.u].s += p.s;
+            players[p.u].c += 1;
+            const clubRank = index + 1;
+            const displayDate = t.d ? new Date(t.d).toLocaleDateString() : '—';
+            players[p.u].t.push({ id: t.id, n: t.n, d: displayDate, s: p.s, r: p.r, cr: clubRank });
+            if (clubRank === 1) players[p.u].m1++;
+            else if (clubRank === 2) players[p.u].m2++;
+            else if (clubRank === 3) players[p.u].m3++;
+        });
+    });
+
+    document.getElementById('stat-pts').textContent = totalScore;
+    document.getElementById('stat-t').textContent = activeCount;
+    document.getElementById('stat-p').textContent = Object.keys(players).length;
+    
+    document.getElementById('list-t').innerHTML = data.map((t, i) => {
+        if (!t || !t.n) return '';
+        const displayDate = t.d ? new Date(t.d).toLocaleDateString() : '—';
+        return `<div class="tournament-item">
+            <div><strong>${t.n}</strong><br><small>${displayDate} • Игроков клуба: ${(t.p || []).length}</small></div>
+            <div><span class="points">${t.pts}</span></div>
+        </div>`}).join('') || '<p style="padding:20px; color:var(--color-text-muted)">Турниры загружаются...</p>';
+    
+    const sorted = Object.entries(players).sort((a, b) => b[1].s - a[1].s);
+    let podiumHtml = '<div class="podium-container">';
+    const top3 = sorted.slice(0, 3);
+    
+    top3.forEach((p, i) => {
+        const place = i + 1;
+        const medal = place === 1 ? '🥇' : place === 2 ? '🥈' : '🥉';
+        podiumHtml += `
+            <div class="podium-place place-${place}">
+                <span class="podium-rank">${medal}</span>
+                <a class="player-link podium-name" onclick="selectPlayerFromTable('${p[0]}')">${p[0]}</a>
+                <div class="points" style="font-size: 1.2em;">${p[1].s}</div>
+                <small style="color:var(--color-text-muted)">${p[1].c} турн.</small>
+            </div>`;
+    });
+    podiumHtml += '</div>';
+
+    const rest = sorted.slice(3);
+    let tableHtml = `<table><tr><th>#</th><th>Игрок</th><th>Турниры</th><th>Очки</th></tr>`;
+    tableHtml += rest.map((p, i) => `
+        <tr>
+            <td>${i + 4}</td>
+            <td><a class="player-link" onclick="selectPlayerFromTable('${p[0]}')">${p[0]}</a></td>
+            <td>${p[1].c}</td>
+            <td class="points">${p[1].s}</td>
+        </tr>`).join('');
+    tableHtml += `</table>`;
+
+    document.getElementById('list-r').innerHTML = sorted.length ? (podiumHtml + tableHtml) : '';
+
+    const sortedByMedals = Object.entries(players)
+        .filter(p => (p[1].m1 + p[1].m2 + p[1].m3) > 0)
+        .sort((a, b) => (b[1].m1 - a[1].m1) || (b[1].m2 - a[1].m2) || (b[1].m3 - a[1].m3));
+
+    document.getElementById('list-podium').innerHTML = `<table>
+        <tr><th>#</th><th>Игрок</th><th>🥇 1-е</th><th>🥈 2-е</th><th>🥉 3-е</th><th>Всего</th></tr>
+        ${sortedByMedals.map((p, i) => `
+            <tr>
+                <td>${i+1}</td>
+                <td><a class="player-link" onclick="selectPlayerFromTable('${p[0]}')">${p[0]}</a></td>
+                <td class="medal-gold">${p[1].m1}</td>
+                <td class="medal-silver">${p[1].m2}</td>
+                <td class="medal-bronze">${p[1].m3}</td>
+                <td>${p[1].m1 + p[1].m2 + p[1].m3}</td>
+            </tr>`).join('')}</table>` || '<p style="padding:20px; color:var(--color-text-muted)">Медалистов пока нет</p>';
+
+    const sel = document.getElementById('sel-p');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">-- Выберите игрока --</option>' + Object.keys(players).sort().map(p => `<option value="${p}">${p}</option>`).join('');
+    sel.value = cur;
+}
+
+function showPlayerStats() {
+    const u = document.getElementById('sel-p').value;
+    const box = document.getElementById('player-res');
+    if (!u) return box.innerHTML = '';
+    const p = players[u];
+    box.innerHTML = `<div style="padding:15px; background:var(--color-bg-base); border-radius:8px; margin-top:10px;">
+        <h3>${u}</h3>
+        <p style="margin-top: 5px; margin-bottom: 5px;">Медали клуба: <span class="medal-gold">🥇 ${p.m1}</span> | <span class="medal-silver">🥈 ${p.m2}</span> | <span class="medal-bronze">🥉 ${p.m3}</span></p>
+        <p>В текущем фильтре: <b class="points">${p.s}</b> очков в ${p.c} турнирах</p>
+        <table style="margin-top:15px;">
+            <tr><th>Дата</th><th>Турнир</th><th>Очки</th><th>Место (Клуб)</th><th>Место (Личесс)</th></tr>
+            ${p.t.map(t => `<tr>
+                <td style="color:var(--color-text-muted); font-size:13px; white-space:nowrap;">${t.d}</td>
+                <td><a href="https://lichess.org/tournament/${t.id}" target="_blank" class="tourney-link">${t.n}</a></td>
+                <td class="points">${t.s}</td>
+                <td class="${t.cr === 1 ? 'medal-gold' : t.cr === 2 ? 'medal-silver' : t.cr === 3 ? 'medal-bronze' : ''}">#${t.cr}</td>
+                <td style="color:var(--color-text-muted)">#${t.r}</td>
+            </tr>`).join('')}
+        </table>
+    </div>`;
+}
+</script>
+</body>
+</html>
