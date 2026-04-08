@@ -1,7 +1,7 @@
 name: Update Lichess Stats
 on:
   schedule:
-  - cron: '1 20 * * *' # Запуск каждый день в 22:01 по Берлину (летнее время)
+    - cron: '1 20 * * *' # Запуск каждый день в 22:01 по Берлину
   workflow_dispatch: # Позволяет запустить вручную кнопкой
 
 jobs:
@@ -10,14 +10,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Загружает всю историю, чтобы избежать конфликтов
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
       - name: Install dependencies
         run: pip install requests
-     - name: Run update script
+      - name: Run update script
         env:
           TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
           TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
