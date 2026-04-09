@@ -25,7 +25,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, sans-serif; background: var(--color-bg-base); color: var(--color-text-primary); padding: 20px; line-height: 1.6; }
         
-        /* Водяной знак с логотипом на фоне */
         .logo-watermark {
             position: fixed;
             top: 50%;
@@ -48,7 +47,6 @@
         .container { max-width: 1200px; margin: 0 auto; position: relative; }
         header, .card { background: var(--color-bg-elevated); padding: 20px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         
-        /* Стили для шапки с логотипом */
         .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         .header-title-container { display: flex; align-items: center; gap: 15px; }
         .header-logo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 12px rgba(56, 189, 248, 0.4); border: 2px solid var(--color-bg-surface); }
@@ -80,6 +78,7 @@
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--color-border); }
         th { color: var(--color-text-muted); font-size: 12px; text-transform: uppercase; }
         .points { color: var(--color-success); font-weight: bold; }
+        .avg-points { color: var(--color-primary); font-weight: bold; }
         .medal-gold { color: var(--color-gold); font-weight: bold; }
         .medal-silver { color: var(--color-silver); font-weight: bold; }
         .medal-bronze { color: var(--color-bronze); font-weight: bold; }
@@ -90,7 +89,6 @@
         .tourney-link { color: var(--color-primary); text-decoration: none; font-weight: bold; transition: 0.2s; }
         .tourney-link:hover { color: var(--color-primary-hover); text-decoration: underline; }
 
-        /* --- Стили для пьедестала --- */
         .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin: 20px 0 30px 0; }
         .podium-place { 
             background: var(--color-bg-surface); 
@@ -98,12 +96,20 @@
             text-align: center; flex: 1; 
             max-width: 180px; border: 2px solid transparent; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            position: relative;
         }
         .place-1 { order: 2; min-height: 160px; border-color: var(--color-gold); transform: scale(1.05); }
         .place-2 { order: 1; min-height: 140px; border-color: var(--color-silver); }
         .place-3 { order: 3; min-height: 130px; border-color: var(--color-bronze); }
         .podium-rank { font-size: 28px; display: block; margin-bottom: 5px; }
         .podium-name { font-weight: bold; display: block; margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        
+        .achievements-box { background: var(--color-bg-surface); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--color-border); }
+        .achievements-box h4 { margin-bottom: 10px; color: var(--color-text-primary); }
+        .achievements-list { font-size: 13px; color: var(--color-text-secondary); line-height: 1.8; }
+        
+        /* Стили для бейджей с подсказками */
+        .badge { cursor: help; margin-right: 3px; font-size: 1.1em; display: inline-block; }
     </style>
 </head>
 <body>
@@ -114,7 +120,7 @@
     <header>
         <div class="header-top">
             <div class="header-title-container">
-                <img src="logo.jpg" alt="Логотип" class="header-logo">
+                <img src="logo.jpg" alt="Логотип" class="header-logo" onerror="this.style.display='none'">
                 <h1 style="margin: 0;">🏆 Лига Достижений Lichess</h1>
             </div>
             <div>
@@ -135,7 +141,7 @@
     <div id="view-main" class="tab-content active">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
             <div class="card"><h3>Очки команды</h3><div id="stat-pts" style="font-size:32px;">0</div></div>
-            <div class="card"><h3>Турниры (активные)</h3><div id="stat-t" style="font-size:32px;">0</div></div>
+            <div class="card"><h3>Турниры</h3><div id="stat-t" style="font-size:32px;">0</div></div>
             <div class="card"><h3>Активные игроки</h3><div id="stat-p" style="font-size:32px;">0</div></div>
         </div>
     </div>
@@ -148,10 +154,9 @@
         <div class="card" style="padding: 15px; margin-bottom: 15px;">
             <div class="input-group" style="align-items: flex-start;">
                 <span style="color: var(--color-text-muted); font-size: 13px; margin-top: 10px;">ВИД ТУРНИРА:</span>
-                <div id="filterType" style="display: flex; flex-wrap: wrap; gap: 10px; flex: 1;">
-                    </div>
+                <div id="filterType" style="display: flex; flex-wrap: wrap; gap: 10px; flex: 1;"></div>
             </div>
-            <div class="input-group" style="margin-bottom: 0;">
+            <div class="input-group" style="margin-bottom: 15px;">
                 <span style="color: var(--color-text-muted); font-size: 13px;">ПЕРИОД:</span>
                 <label for="dateFrom">С</label>
                 <input type="date" id="dateFrom" onchange="handleFilterChange()">
@@ -159,14 +164,32 @@
                 <input type="date" id="dateTo" onchange="handleFilterChange()">
                 <button class="btn-secondary" onclick="resetFilters()">Сброс</button>
             </div>
+            
+            <div class="input-group" style="margin-bottom: 0; padding-top: 15px; border-top: 1px solid var(--color-border);">
+                <span style="color: var(--color-text-muted); font-size: 13px;">СОРТИРОВАТЬ:</span>
+                <select id="sortType" onchange="refresh()" style="max-width: 300px;">
+                    <option value="score">По сумме очков (Классика)</option>
+                    <option value="avg">По эффективности (В среднем за турнир)</option>
+                </select>
+            </div>
         </div>
+
+        <div class="achievements-box">
+            <h4>Справочник достижений</h4>
+            <div class="achievements-list">
+                <div><span class="badge">🛡️</span> <b>Ветеран</b> — сыграл в 10 и более турнирах (в текущем фильтре).</div>
+                <div><span class="badge">⚔️</span> <b>Гладиатор</b> — набрал 30 и более очков в одном из турниров.</div>
+                <div><span class="badge">🎯</span> <b>Снайпер</b> — лучшая эффективность (самый высокий средний балл) среди тех, кто сыграл минимум 3 турнира.</div>
+            </div>
+        </div>
+
         <div class="card" id="list-r"></div>
     </div>
 
     <div id="view-podium" class="tab-content">
         <div class="card">
             <h3>Зачет по медалям ВНУТРИ КЛУБА</h3>
-            <p style="color: var(--color-text-muted); font-size: 13px; margin-bottom: 15px;">Учитываются 1, 2 и 3 места только среди членов команды "43TISSDh".</p>
+            <p style="color: var(--color-text-muted); font-size: 13px; margin-bottom: 15px;">Учитываются 1, 2 и 3 места только среди членов команды "43TISSDh" в рамках каждого отдельного турнира.</p>
             <div id="list-podium"></div>
         </div>
     </div>
@@ -183,8 +206,9 @@
 
 <script>
 const TEAM = '43TISSDh';
-let data = [{"id": "ulw9wzJz", "n": "185th Lichess Rapid League 8C Team Battle", "d": "2026-04-06T16:01:00Z", "p": [{"u": "kolbox68", "s": 11, "r": 2}, {"u": "grand58", "s": 10, "r": 3}, {"u": "Artek228", "s": 9, "r": 4}, {"u": "Vitylob", "s": 8, "r": 5}, {"u": "sewatop4ik2", "s": 6, "r": 6}, {"u": "mimimishka2507", "s": 3, "r": 9}, {"u": "vanjatko", "s": 3, "r": 12}, {"u": "afonya-ag", "s": 2, "r": 14}, {"u": "DokTor_ii", "s": 1, "r": 17}, {"u": "ARTURIO999", "s": 0, "r": 19}, {"u": "ROMSO1981", "s": 0, "r": 20}, {"u": "Mr_Gri17", "s": 0, "r": 21}, {"u": "Drochia", "s": 0, "r": 34}, {"u": "Karabas-Barabass", "s": 0, "r": 35}, {"u": "Mr_SergeyAntonov", "s": 0, "r": 37}], "pts": 53, "disabled": false}, {"id": "hzZtCg5a", "n": "Lichess Liga 17A Team Battle", "d": "2026-04-05T18:01:00Z", "p": [{"u": "Andrey092005", "s": 48, "r": 1}, {"u": "OstavaisaSoboi", "s": 33, "r": 3}, {"u": "Mr_SergeyAntonov", "s": 20, "r": 5}, {"u": "nyr-75", "s": 19, "r": 6}, {"u": "Drochia", "s": 15, "r": 9}, {"u": "ROMSO1981", "s": 10, "r": 14}, {"u": "afonya-ag", "s": 5, "r": 16}, {"u": "Ilnarik", "s": 2, "r": 17}, {"u": "Fraza_YO", "s": 2, "r": 19}, {"u": "ARTURIO999", "s": 0, "r": 20}, {"u": "Vitylob", "s": 0, "r": 21}, {"u": "vanjatko", "s": 0, "r": 25}, {"u": "grand58", "s": 0, "r": 29}], "pts": 154, "disabled": false}, {"id": "ywcNITKC", "n": "ПРИЗОВОЙ ТУРНИР Arena", "d": "2026-04-04T18:21:00Z", "p": [{"u": "mimimishka2507", "s": 36, "r": 1}, {"u": "sewatop4ik2", "s": 36, "r": 2}, {"u": "OstavaisaSoboi", "s": 32, "r": 3}, {"u": "Melastry", "s": 28, "r": 4}, {"u": "Mr_SergeyAntonov", "s": 25, "r": 5}, {"u": "kolbox68", "s": 24, "r": 6}, {"u": "nyr-75", "s": 22, "r": 7}, {"u": "Ilnarik", "s": 21, "r": 8}, {"u": "john181982", "s": 14, "r": 9}, {"u": "marsel1515", "s": 13, "r": 10}, {"u": "Andrey092005", "s": 10, "r": 11}, {"u": "Mopnex37VCBPycb", "s": 8, "r": 12}, {"u": "AlexNed", "s": 5, "r": 13}, {"u": "Drochia", "s": 4, "r": 14}, {"u": "IlayKachsheev", "s": 2, "r": 15}, {"u": "ARTURIO999", "s": 1, "r": 16}, {"u": "DokTor_ii", "s": 0, "r": 17}], "pts": 281, "disabled": false}, {"id": "JamFFBRh", "n": "Lichess Liga 18A Team Battle", "d": "2026-04-02T18:01:00Z", "p": [{"u": "Melastry", "s": 34, "r": 1}, {"u": "IlayKachsheev", "s": 32, "r": 2}, {"u": "ROMSO1981", "s": 23, "r": 3}, {"u": "kolbox68", "s": 23, "r": 4}, {"u": "Mr_SergeyAntonov", "s": 21, "r": 5}, {"u": "vanjatko", "s": 20, "r": 6}, {"u": "Drochia", "s": 20, "r": 7}, {"u": "OstavaisaSoboi", "s": 19, "r": 8}, {"u": "ARTURIO999", "s": 18, "r": 9}, {"u": "Karabas-Barabass", "s": 12, "r": 11}, {"u": "Legenda_75", "s": 6, "r": 15}, {"u": "mimimishka2507", "s": 3, "r": 18}, {"u": "AlexNed", "s": 3, "r": 22}, {"u": "Andrey092005", "s": 0, "r": 26}, {"u": "Fortu72", "s": 0, "r": 28}, {"u": "Mr_Gri17", "s": 0, "r": 29}, {"u": "Chess_Factor", "s": 0, "r": 39}, {"u": "sidbnskan_4d567", "s": 0, "r": 46}], "pts": 234, "disabled": false}]; // СЮДА БУДЕТ ВСТАВЛЯТЬ ДАННЫЕ PYTHON СКРИПТ
+let data = []; // СЮДА БУДЕТ ВСТАВЛЯТЬ ДАННЫЕ PYTHON СКРИПТ
 let players = {}; 
+let sniperPlayer = '';
 
 function sortData() {
     if (!Array.isArray(data)) return;
@@ -273,10 +297,23 @@ function selectPlayerFromTable(username) {
     showPlayerStats();
 }
 
+// Функция для генерации значков достижений с подсказками
+function getBadges(username) {
+    if (!players[username]) return '';
+    const p = players[username];
+    let badges = '';
+    if (p.c >= 10) badges += '<span class="badge" title="Ветеран (Сыграл 10+ турниров)">🛡️</span>';
+    if (p.max_s >= 30) badges += '<span class="badge" title="Гладиатор (Набрал 30+ очков в одном турнире)">⚔️</span>';
+    if (username === sniperPlayer) badges += '<span class="badge" title="Снайпер (Лучшая средняя эффективность среди тех, у кого 3+ турнира)">🎯</span>';
+    return badges;
+}
+
 function refresh() {
     players = {};
+    sniperPlayer = '';
     const fromDate = document.getElementById('dateFrom').value;
     const toDate = document.getElementById('dateTo').value;
+    const sortType = document.getElementById('sortType') ? document.getElementById('sortType').value : 'score';
     
     let typeFilters = [];
     try { 
@@ -288,6 +325,7 @@ function refresh() {
     let activeCount = 0;
     let totalScore = 0;
 
+    // Сбор данных
     data.forEach((t, idx) => {
         if (!t || !t.n || t.disabled) return;
         
@@ -307,9 +345,13 @@ function refresh() {
         totalScore += t.pts;
         const sortedInClub = [...(t.p || [])].sort((a, b) => b.s - a.s);
         sortedInClub.forEach((p, index) => {
-            if (!players[p.u]) players[p.u] = { s: 0, c: 0, t: [], m1: 0, m2: 0, m3: 0 };
+            if (!players[p.u]) players[p.u] = { s: 0, c: 0, t: [], m1: 0, m2: 0, m3: 0, max_s: 0, avg: 0 };
             players[p.u].s += p.s;
             players[p.u].c += 1;
+            
+            // Максимальный балл за турнир (для Гладиатора)
+            if (p.s > players[p.u].max_s) players[p.u].max_s = p.s;
+
             const clubRank = index + 1;
             const displayDate = t.d ? new Date(t.d).toLocaleDateString() : '—';
             players[p.u].t.push({ id: t.id, n: t.n, d: displayDate, s: p.s, r: p.r, cr: clubRank });
@@ -319,6 +361,25 @@ function refresh() {
         });
     });
 
+    // Высчитываем средний балл и определяем "Снайпера"
+    let maxAvg = 0;
+    for (const u in players) {
+        players[u].avg = players[u].c > 0 ? (players[u].s / players[u].c) : 0;
+        if (players[u].c >= 3) {
+            if (players[u].avg > maxAvg) {
+                maxAvg = players[u].avg;
+                sniperPlayer = u;
+            }
+        }
+    }
+
+    // Сортировка по выбору (Очки или Эффективность)
+    const sorted = Object.entries(players).sort((a, b) => {
+        if (sortType === 'avg') return b[1].avg - a[1].avg;
+        return b[1].s - a[1].s;
+    });
+
+    // Обновляем статистику
     document.getElementById('stat-pts').textContent = totalScore;
     document.getElementById('stat-t').textContent = activeCount;
     document.getElementById('stat-p').textContent = Object.keys(players).length;
@@ -331,36 +392,44 @@ function refresh() {
             <div><span class="points">${t.pts}</span></div>
         </div>`}).join('') || '<p style="padding:20px; color:var(--color-text-muted)">Турниры загружаются...</p>';
     
-    const sorted = Object.entries(players).sort((a, b) => b[1].s - a[1].s);
+    // Пьедестал
     let podiumHtml = '<div class="podium-container">';
     const top3 = sorted.slice(0, 3);
     
     top3.forEach((p, i) => {
         const place = i + 1;
         const medal = place === 1 ? '🥇' : place === 2 ? '🥈' : '🥉';
+        
+        // Меняем отображение очков на пьедестале в зависимости от сортировки
+        const displayScore = sortType === 'avg' ? p[1].avg.toFixed(1) : p[1].s;
+        const displayLabel = sortType === 'avg' ? 'в ср.' : 'очков';
+
         podiumHtml += `
             <div class="podium-place place-${place}">
                 <span class="podium-rank">${medal}</span>
-                <a class="player-link podium-name" onclick="selectPlayerFromTable('${p[0]}')">${p[0]}</a>
-                <div class="points" style="font-size: 1.2em;">${p[1].s}</div>
+                <a class="player-link podium-name" onclick="selectPlayerFromTable('${p[0]}')">${getBadges(p[0])} ${p[0]}</a>
+                <div class="${sortType === 'avg' ? 'avg-points' : 'points'}" style="font-size: 1.2em;">${displayScore} <span style="font-size: 0.6em; color: var(--color-text-muted);">${displayLabel}</span></div>
                 <small style="color:var(--color-text-muted)">${p[1].c} турн.</small>
             </div>`;
     });
     podiumHtml += '</div>';
 
+    // Таблица
     const rest = sorted.slice(3);
-    let tableHtml = `<table><tr><th>#</th><th>Игрок</th><th>Турниры</th><th>Очки</th></tr>`;
+    let tableHtml = `<table><tr><th>#</th><th>Игрок</th><th>Турниры</th><th>Очки</th><th>В ср.</th></tr>`;
     tableHtml += rest.map((p, i) => `
         <tr>
             <td>${i + 4}</td>
-            <td><a class="player-link" onclick="selectPlayerFromTable('${p[0]}')">${p[0]}</a></td>
+            <td><a class="player-link" onclick="selectPlayerFromTable('${p[0]}')">${getBadges(p[0])} ${p[0]}</a></td>
             <td>${p[1].c}</td>
             <td class="points">${p[1].s}</td>
+            <td class="avg-points">${p[1].avg.toFixed(1)}</td>
         </tr>`).join('');
     tableHtml += `</table>`;
 
     document.getElementById('list-r').innerHTML = sorted.length ? (podiumHtml + tableHtml) : '';
 
+    // Медальный зачет
     const sortedByMedals = Object.entries(players)
         .filter(p => (p[1].m1 + p[1].m2 + p[1].m3) > 0)
         .sort((a, b) => (b[1].m1 - a[1].m1) || (b[1].m2 - a[1].m2) || (b[1].m3 - a[1].m3));
@@ -370,13 +439,14 @@ function refresh() {
         ${sortedByMedals.map((p, i) => `
             <tr>
                 <td>${i+1}</td>
-                <td><a class="player-link" onclick="selectPlayerFromTable('${p[0]}')">${p[0]}</a></td>
+                <td><a class="player-link" onclick="selectPlayerFromTable('${p[0]}')">${getBadges(p[0])} ${p[0]}</a></td>
                 <td class="medal-gold">${p[1].m1}</td>
                 <td class="medal-silver">${p[1].m2}</td>
                 <td class="medal-bronze">${p[1].m3}</td>
                 <td>${p[1].m1 + p[1].m2 + p[1].m3}</td>
             </tr>`).join('')}</table>` || '<p style="padding:20px; color:var(--color-text-muted)">Медалистов пока нет</p>';
 
+    // Выпадающий список игроков
     const sel = document.getElementById('sel-p');
     const cur = sel.value;
     sel.innerHTML = '<option value="">-- Выберите игрока --</option>' + Object.keys(players).sort().map(p => `<option value="${p}">${p}</option>`).join('');
@@ -389,9 +459,9 @@ function showPlayerStats() {
     if (!u) return box.innerHTML = '';
     const p = players[u];
     box.innerHTML = `<div style="padding:15px; background:var(--color-bg-base); border-radius:8px; margin-top:10px;">
-        <h3>${u}</h3>
+        <h3>${getBadges(u)} ${u}</h3>
         <p style="margin-top: 5px; margin-bottom: 5px;">Медали клуба: <span class="medal-gold">🥇 ${p.m1}</span> | <span class="medal-silver">🥈 ${p.m2}</span> | <span class="medal-bronze">🥉 ${p.m3}</span></p>
-        <p>В текущем фильтре: <b class="points">${p.s}</b> очков в ${p.c} турнирах</p>
+        <p>В текущем фильтре: <b class="points">${p.s}</b> очков в ${p.c} турнирах (В среднем: <b class="avg-points">${p.avg.toFixed(1)}</b>)</p>
         <table style="margin-top:15px;">
             <tr><th>Дата</th><th>Турнир</th><th>Очки</th><th>Место (Клуб)</th><th>Место (Личесс)</th></tr>
             ${p.t.map(t => `<tr>
