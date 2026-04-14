@@ -106,7 +106,7 @@ today = datetime.datetime.utcnow().weekday()
 # Отправляем сообщение по Пн (0), Ср (2 - временно для теста сегодня), Чт (3) и Вс (6)
 if today in [0, 3, 6]: 
     print("Отправляю уведомление в Telegram...")
-    send_telegram_message()
+    #  send_telegram_message()
 else:
     print(f"Сегодня номер дня {today}. Телеграм отдыхает.")
 
