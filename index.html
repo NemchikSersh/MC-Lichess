@@ -4,112 +4,230 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Лига Достижений Lichess - 43TISSDh</title>
+    <!-- Подключаем шрифт Inter -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
     <style>
         :root {
-            --color-bg-base: #0f172a;
-            --color-bg-elevated: #1e293b;
-            --color-bg-surface: #334155;
-            --color-text-primary: #f1f5f9;
-            --color-text-secondary: #cbd5e1;
-            --color-text-muted: #94a3b8;
+            --color-bg-base: #090d16;
+            --color-bg-elevated: rgba(22, 30, 49, 0.75);
+            --color-bg-surface: rgba(33, 45, 71, 0.6);
+            --color-bg-hover: rgba(51, 68, 105, 0.8);
+            --color-text-primary: #f8fafc;
+            --color-text-secondary: #94a3b8;
+            --color-text-muted: #64748b;
             --color-primary: #38bdf8;
-            --color-primary-hover: #0ea5e9;
+            --color-primary-glow: rgba(56, 189, 248, 0.3);
             --color-success: #22c55e;
-            --color-warning: #f59e0b;
-            --color-error: #ef4444;
-            --color-border: rgba(148, 163, 184, 0.2);
-            --color-gold: #d4af37;
-            --color-silver: #c0c0c0;
-            --color-bronze: #cd7f32;
+            --color-border: rgba(255, 255, 255, 0.08);
+            --color-gold: #fbbf24;
+            --color-gold-glow: rgba(251, 191, 36, 0.3);
+            --color-silver: #94a3b8;
+            --color-silver-glow: rgba(148, 163, 184, 0.2);
+            --color-bronze: #f97316;
+            --color-bronze-glow: rgba(249, 115, 22, 0.2);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, sans-serif; background: var(--color-bg-base); color: var(--color-text-primary); padding: 20px; line-height: 1.6; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
         
+        body { 
+            background: var(--color-bg-base); 
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.12) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--color-text-primary); 
+            padding: 24px 16px; 
+            line-height: 1.5; 
+            min-height: 100vh;
+        }
+
         .logo-watermark {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 70vw;
-            height: 70vh;
-            max-width: 550px;
-            max-height: 550px;
+            width: 60vw;
+            height: 60vh;
+            max-width: 500px;
+            max-height: 500px;
             background-image: url('logo.jpg'); 
             background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
-            opacity: 0.15; 
+            opacity: 0.06; 
             pointer-events: none; 
-            z-index: 9999; 
-            mix-blend-mode: screen; 
+            z-index: 0; 
+            filter: blur(2px);
         }
 
-        .container { max-width: 1200px; margin: 0 auto; position: relative; }
-        header, .card { background: var(--color-bg-elevated); padding: 20px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .container { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+
+        /* Glassmorphism Cards */
+        header, .card { 
+            background: var(--color-bg-elevated); 
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--color-border);
+            padding: 24px; 
+            border-radius: 16px; 
+            margin-bottom: 24px; 
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5); 
+        }
+
+        .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+        .header-title-container { display: flex; align-items: center; gap: 16px; }
+        .header-logo { 
+            width: 54px; height: 54px; border-radius: 50%; object-fit: cover; 
+            box-shadow: 0 0 20px var(--color-primary-glow); 
+            border: 2px solid var(--color-primary); 
+        }
+
+        h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; }
         
-        .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-        .header-title-container { display: flex; align-items: center; gap: 15px; }
-        .header-logo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 12px rgba(56, 189, 248, 0.4); border: 2px solid var(--color-bg-surface); }
+        .team-badge { 
+            background: var(--color-bg-surface); 
+            border: 1px solid var(--color-border);
+            padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 500;
+            display: inline-flex; align-items: center; gap: 6px; color: var(--color-text-secondary); 
+        }
+        .team-badge strong { color: var(--color-text-primary); }
+
+        /* Navigation Tabs */
+        .tabs { 
+            display: flex; gap: 8px; margin-bottom: 24px; 
+            border-bottom: 1px solid var(--color-border); padding-bottom: 8px;
+            overflow-x: auto; scrollbar-width: none;
+        }
+        .tabs::-webkit-scrollbar { display: none; }
         
-        .team-badge { background: var(--color-bg-surface); padding: 6px 12px; border-radius: 6px; font-size: 14px; display: inline-block; margin-right: 10px; }
-        .input-group { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; align-items: center; }
-        
+        .tab { 
+            background: transparent; color: var(--color-text-secondary); 
+            border: 1px solid transparent; border-radius: 10px; 
+            padding: 10px 18px; font-weight: 600; font-size: 14px;
+            cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
+        }
+        .tab:hover { color: var(--color-text-primary); background: var(--color-bg-surface); }
+        .tab.active { 
+            color: var(--color-primary); background: rgba(56, 189, 248, 0.1); 
+            border-color: rgba(56, 189, 248, 0.2); box-shadow: 0 0 15px var(--color-primary-glow);
+        }
+
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Metrics Stat Cards */
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+        .stat-card { text-align: left; position: relative; overflow: hidden; margin-bottom: 0; }
+        .stat-card h3 { font-size: 13px; font-weight: 600; text-transform: uppercase; color: var(--color-text-muted); letter-spacing: 0.05em; margin-bottom: 8px; }
+        .stat-card .val { font-size: 2.2rem; font-weight: 800; color: var(--color-text-primary); }
+
+        /* Controls & Inputs */
+        .input-group { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
         input[type="date"], select { 
             background: var(--color-bg-surface); border: 1px solid var(--color-border); 
-            color: white; padding: 10px; border-radius: 8px; flex: 1; min-width: 150px; 
+            color: var(--color-text-primary); padding: 10px 14px; border-radius: 10px; 
+            font-size: 14px; outline: none; transition: 0.2s;
         }
+        input[type="date"]:focus, select:focus { border-color: var(--color-primary); box-shadow: 0 0 10px var(--color-primary-glow); }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
         
-        .cb-container { display: flex; align-items: center; cursor: pointer; user-select: none; }
-        .cb-container input[type="checkbox"] { 
-            width: 18px; height: 18px; margin: 0 10px 0 0; padding: 0; 
-            flex: none; min-width: auto; cursor: pointer; accent-color: var(--color-primary); 
+        /* Modern Tag/Chip Checkboxes */
+        .chip-cb { display: inline-flex; align-items: center; cursor: pointer; user-select: none; }
+        .chip-cb input { display: none; }
+        .chip-cb span { 
+            background: var(--color-bg-surface); border: 1px solid var(--color-border);
+            padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;
+            color: var(--color-text-secondary); transition: all 0.2s;
         }
-        
-        button { border: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 14px; }
-        .btn-secondary { background: var(--color-bg-surface); color: white; }
-        .btn-secondary:hover { background: #475569; }
-        .tabs { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 1px solid var(--color-border); overflow-x: auto; }
-        .tab { background: transparent; color: var(--color-text-muted); border-bottom: 2px solid transparent; border-radius: 0; padding: 10px 15px; }
-        .tab.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--color-border); }
-        th { color: var(--color-text-muted); font-size: 12px; text-transform: uppercase; }
-        .points { color: var(--color-success); font-weight: bold; }
-        .avg-points { color: var(--color-primary); font-weight: bold; }
-        .medal-gold { color: var(--color-gold); font-weight: bold; }
-        .medal-silver { color: var(--color-silver); font-weight: bold; }
-        .medal-bronze { color: var(--color-bronze); font-weight: bold; }
-        .tournament-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--color-bg-surface); border-radius: 8px; margin-bottom: 8px; }
-        
-        .player-link { color: var(--color-primary); text-decoration: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .player-link:hover { color: var(--color-primary-hover); text-decoration: underline; }
-        .tourney-link { color: var(--color-primary); text-decoration: none; font-weight: bold; transition: 0.2s; }
-        .tourney-link:hover { color: var(--color-primary-hover); text-decoration: underline; }
+        .chip-cb input:checked + span { 
+            background: rgba(56, 189, 248, 0.18); border-color: var(--color-primary); 
+            color: var(--color-primary); box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+        }
 
-        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin: 20px 0 30px 0; }
-        .podium-place { 
-            background: var(--color-bg-surface); 
-            border-radius: 12px; padding: 15px; 
-            text-align: center; flex: 1; 
-            max-width: 180px; border: 2px solid transparent; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            position: relative;
+        button { 
+            border: none; padding: 10px 18px; border-radius: 10px; 
+            font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 14px; 
         }
-        .place-1 { order: 2; min-height: 160px; border-color: var(--color-gold); transform: scale(1.05); }
-        .place-2 { order: 1; min-height: 140px; border-color: var(--color-silver); }
-        .place-3 { order: 3; min-height: 130px; border-color: var(--color-bronze); }
-        .podium-rank { font-size: 28px; display: block; margin-bottom: 5px; }
-        .podium-name { font-weight: bold; display: block; margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .btn-secondary { background: var(--color-bg-surface); color: var(--color-text-primary); border: 1px solid var(--color-border); }
+        .btn-secondary:hover { background: var(--color-bg-hover); }
+
+        /* Tables */
+        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 8px; }
+        th, td { padding: 14px 16px; text-align: left; }
+        th { 
+            color: var(--color-text-muted); font-size: 12px; font-weight: 700; 
+            text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-border); 
+        }
+        td { border-bottom: 1px solid var(--color-border); font-size: 14px; }
+        tr:last-child td { border-bottom: none; }
+        tbody tr { transition: background 0.2s; }
+        tbody tr:hover { background: var(--color-bg-hover); }
+
+        .points { color: var(--color-success); font-weight: 700; }
+        .avg-points { color: var(--color-primary); font-weight: 700; }
+        .medal-gold { color: var(--color-gold); font-weight: 700; }
+        .medal-silver { color: var(--color-silver); font-weight: 700; }
+        .medal-bronze { color: var(--color-bronze); font-weight: 700; }
+
+        .tournament-item { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 14px 18px; background: var(--color-bg-surface); 
+            border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--color-border);
+            transition: transform 0.2s;
+        }
+        .tournament-item:hover { transform: translateX(4px); }
+
+        .player-link { 
+            color: var(--color-text-primary); text-decoration: none; font-weight: 600; 
+            cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px;
+        }
+        .player-link:hover { color: var(--color-primary); }
+        .tourney-link { color: var(--color-primary); text-decoration: none; font-weight: 600; }
+        .tourney-link:hover { text-decoration: underline; }
+
+        /* Podium Design */
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 16px; margin: 16px 0 8px 0; }
+        .podium-place { 
+            background: var(--color-bg-surface); backdrop-filter: blur(10px);
+            border-radius: 16px; padding: 20px 16px; text-align: center; flex: 1; 
+            max-width: 200px; border: 1px solid var(--color-border); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4); position: relative; transition: transform 0.3s;
+        }
+        .podium-place:hover { transform: translateY(-6px); }
+        .place-1 { 
+            order: 2; min-height: 190px; border-color: var(--color-gold); 
+            box-shadow: 0 0 30px var(--color-gold-glow); transform: scale(1.05); 
+        }
+        .place-1:hover { transform: scale(1.08) translateY(-6px); }
+        .place-2 { order: 1; min-height: 160px; border-color: var(--color-silver); box-shadow: 0 0 20px var(--color-silver-glow); }
+        .place-3 { order: 3; min-height: 145px; border-color: var(--color-bronze); box-shadow: 0 0 20px var(--color-bronze-glow); }
+        .podium-rank { font-size: 32px; display: block; margin-bottom: 8px; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5)); }
+        .podium-name { font-weight: 700; font-size: 15px; display: block; margin-bottom: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* Achievement Guide Box */
+        .achievements-box { 
+            background: var(--color-bg-surface); padding: 18px; border-radius: 12px; 
+            margin-bottom: 20px; border: 1px solid var(--color-border); 
+        }
+        .achievements-box h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--color-primary); }
+        .achievements-list { font-size: 13px; color: var(--color-text-secondary); display: flex; flex-direction: column; gap: 8px; }
+
+        /* Badges & Tooltips */
+        .badge { 
+            font-size: 0.8em; padding: 2px 6px; border-radius: 6px; 
+            background: rgba(255,255,255,0.08); border: 1px solid var(--color-border);
+        }
         
-        .achievements-box { background: var(--color-bg-surface); padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid var(--color-border); }
-        .achievements-box h4 { margin-bottom: 10px; color: var(--color-text-primary); }
-        .achievements-list { font-size: 13px; color: var(--color-text-secondary); line-height: 1.8; }
-        
-        /* Стили для бейджей с подсказками */
-        .badge { cursor: help; margin-right: 3px; font-size: 1.1em; display: inline-block; }
+        @media (max-width: 640px) {
+            body { padding: 12px 8px; }
+            header, .card { padding: 16px; border-radius: 12px; }
+            h1 { font-size: 1.2rem; }
+            .podium-container { gap: 8px; }
+            .podium-place { padding: 12px 8px; }
+            .podium-name { font-size: 13px; }
+            th, td { padding: 10px 8px; font-size: 13px; }
+        }
     </style>
 </head>
 <body>
@@ -118,56 +236,72 @@
 
 <div class="container">
     <header>
-        <div class="header-top">
-            <div class="header-title-container">
-                <img src="logo.jpg" alt="Логотип" class="header-logo" onerror="this.style.display='none'">
-                <h1 style="margin: 0;">🏆 Лига Достижений Lichess</h1>
-            </div>
-            <div>
-                <div class="team-badge">Команда: <strong>43TISSDh</strong></div>
-                <div class="team-badge">ID: <strong>43TISSDh</strong></div>
-            </div>
+        <div class="header-top" style="display: flex; justify-content: space-between; align-items: center;">
+            <!-- Левый логотип -->
+            <img src="logo.jpg" alt="Логотип" class="header-logo" onerror="this.style.display='none'">
+            
+            <!-- Название команды по центру -->
+            <h1 style="margin: 0; text-align: center; flex: 1; text-transform: uppercase; letter-spacing: 1px;">
+                БУДУЩИЕ СМ 🥊
+            </h1>
+            
+            <!-- Правый логотип (зеркальный элемент) -->
+            <img src="logo.jpg" alt="Логотип" class="header-logo" onerror="this.style.display='none'">
         </div>
     </header>
 
     <div class="tabs">
-        <button class="tab active" onclick="openTab(event, 'view-main')">Обзор</button>
-        <button class="tab" onclick="openTab(event, 'view-list')">Турниры</button>
-        <button class="tab" onclick="openTab(event, 'view-rating')">Рейтинг</button>
+        <button class="tab active" onclick="openTab(event, 'view-main')">⚡ Обзор</button>
+        <button class="tab" onclick="openTab(event, 'view-rating')">📊 Рейтинг</button>
         <button class="tab" onclick="openTab(event, 'view-podium')">🥇 Пьедестал Клуба</button>
-        <button class="tab" onclick="openTab(event, 'view-player')">По игроку</button>
+        <button class="tab" onclick="openTab(event, 'view-list')">⚔️ Турниры</button>
+        <button class="tab" onclick="openTab(event, 'view-player')">👤 По игроку</button>
     </div>
 
+    <!-- ВКЛАДКА "ОБЗОР": Статистика + Топ-3 Лидеров -->
     <div id="view-main" class="tab-content active">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-            <div class="card"><h3>Очки команды</h3><div id="stat-pts" style="font-size:32px;">0</div></div>
-            <div class="card"><h3>Турниры</h3><div id="stat-t" style="font-size:32px;">0</div></div>
-            <div class="card"><h3>Активные игроки</h3><div id="stat-p" style="font-size:32px;">0</div></div>
+        <div class="stat-grid" style="margin-bottom: 24px;">
+            <div class="card stat-card">
+                <h3>Очки команды</h3>
+                <div id="stat-pts" class="val points">0</div>
+            </div>
+            <div class="card stat-card">
+                <h3>Турниры в зачете</h3>
+                <div id="stat-t" class="val" style="color: var(--color-primary);">0</div>
+            </div>
+            <div class="card stat-card">
+                <h3>Активные игроки</h3>
+                <div id="stat-p" class="val" style="color: var(--color-gold);">0</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-bottom: 8px; font-size: 1.1rem;">🔥 Лидеры клуба (Топ-3)</h3>
+            <p style="color: var(--color-text-muted); font-size: 13px; margin-bottom: 12px;">Текущая тройка сильнейших игроков команды по общему количеству очков.</p>
+            <div id="main-top3-container"></div>
         </div>
     </div>
 
-    <div id="view-list" class="tab-content">
-        <div class="card" id="list-t"></div>
-    </div>
-
+    <!-- ВКЛАДКА "РЕЙТИНГ": Упрощенные фильтры + Таблица -->
     <div id="view-rating" class="tab-content">
-        <div class="card" style="padding: 15px; margin-bottom: 15px;">
-            <div class="input-group" style="align-items: flex-start;">
-                <span style="color: var(--color-text-muted); font-size: 13px; margin-top: 10px;">ВИД ТУРНИРА:</span>
-                <div id="filterType" style="display: flex; flex-wrap: wrap; gap: 10px; flex: 1;"></div>
-            </div>
-            <div class="input-group" style="margin-bottom: 15px;">
-                <span style="color: var(--color-text-muted); font-size: 13px;">ПЕРИОД:</span>
-                <label for="dateFrom">С</label>
-                <input type="date" id="dateFrom" onchange="handleFilterChange()">
-                <label for="dateTo">По</label>
-                <input type="date" id="dateTo" onchange="handleFilterChange()">
-                <button class="btn-secondary" onclick="resetFilters()">Сброс</button>
+        <div class="card" style="padding: 18px; margin-bottom: 20px;">
+            <div class="input-group" style="align-items: flex-start; margin-bottom: 12px;">
+                <span style="color: var(--color-text-muted); font-size: 12px; font-weight: 700; margin-top: 8px; min-width: 100px;">ТУРНИРЫ:</span>
+                <div id="filterType" style="display: flex; flex-wrap: wrap; gap: 8px; flex: 1;"></div>
             </div>
             
-            <div class="input-group" style="margin-bottom: 0; padding-top: 15px; border-top: 1px solid var(--color-border);">
-                <span style="color: var(--color-text-muted); font-size: 13px;">СОРТИРОВАТЬ:</span>
-                <select id="sortType" onchange="refresh()" style="max-width: 300px;">
+            <div class="input-group" style="margin-bottom: 16px;">
+                <span style="color: var(--color-text-muted); font-size: 12px; font-weight: 700; min-width: 100px;">ПЕРИОД:</span>
+                <label for="dateFrom" style="font-size: 13px; color: var(--color-text-secondary);">С</label>
+                <input type="date" id="dateFrom" onchange="handleFilterChange()">
+                <label for="dateTo" style="font-size: 13px; color: var(--color-text-secondary);">По</label>
+                <input type="date" id="dateTo" onchange="handleFilterChange()">
+                <button class="btn-secondary" onclick="resetFilters()">Сбросить</button>
+            </div>
+            
+            <div class="input-group" style="margin-bottom: 0; padding-top: 14px; border-top: 1px solid var(--color-border);">
+                <span style="color: var(--color-text-muted); font-size: 12px; font-weight: 700; min-width: 100px;">СОРТИРОВКА:</span>
+                <select id="sortType" onchange="refresh()" style="max-width: 280px;">
                     <option value="score">По сумме очков (Классика)</option>
                     <option value="avg">По эффективности (В среднем за турнир)</option>
                 </select>
@@ -175,11 +309,13 @@
         </div>
 
         <div class="achievements-box">
-            <h4>Справочник достижений</h4>
+            <h4>💡 Справочник достижений</h4>
             <div class="achievements-list">
-                <div><span class="badge">🛡️</span> <b>Ветеран</b> — сыграл в 10 и более турнирах (в текущем фильтре).</div>
-                <div><span class="badge">⚔️</span> <b>Гладиатор</b> — набрал 30 и более очков в одном из турниров.</div>
-                <div><span class="badge">🎯</span> <b>Снайпер</b> — лучшая эффективность (самый высокий средний балл) среди тех, кто сыграл минимум 3 турнира.</div>
+                <div><span class="badge">🌟</span> <b>Легенда</b> — сыграл в 35 и более турнирах.</div>
+                <div><span class="badge">🛡️</span> <b>Ветеран</b> — сыграл в 10 и более турнирах.</div>
+                <div><span class="badge">🎖️</span> <b>Авангард</b> — не пропустил 5 последних турниров (в текущем фильтре) подряд.</div>
+                <div><span class="badge">⚔️</span> <b>Гладиатор</b> — набрал 30+ очков в одном из турниров.</div>
+                <div><span class="badge">🎯</span> <b>Снайпер</b> — лучшая эффективность (средний балл) при сыгранных 3+ турнирах.</div>
             </div>
         </div>
 
@@ -188,10 +324,14 @@
 
     <div id="view-podium" class="tab-content">
         <div class="card">
-            <h3>Зачет по медалям ВНУТРИ КЛУБА</h3>
-            <p style="color: var(--color-text-muted); font-size: 13px; margin-bottom: 15px;">Учитываются 1, 2 и 3 места только среди членов команды "43TISSDh" в рамках каждого отдельного турнира.</p>
+            <h3 style="margin-bottom: 4px;">Зачет по медалям ВНУТРИ КЛУБА</h3>
+            <p style="color: var(--color-text-muted); font-size: 13px; margin-bottom: 20px;">Учитываются 1, 2 и 3 места только среди членов команды "43TISSDh" в каждом турнире.</p>
             <div id="list-podium"></div>
         </div>
+    </div>
+
+    <div id="view-list" class="tab-content">
+        <div class="card" id="list-t"></div>
     </div>
 
     <div id="view-player" class="tab-content">
@@ -206,7 +346,7 @@
 
 <script>
 const TEAM = '43TISSDh';
-let data = [{"id": "kWFzF2JR", "n": "Lichess Liga 3A Team Battle", "d": "2026-08-13T18:01:00Z", "p": [{"u": "sewatop4ik", "s": 29, "r": 12}, {"u": "Obsidian_destroyer", "s": 25, "r": 19}, {"u": "kolbox68", "s": 24, "r": 29}, {"u": "Rumoleg", "s": 20, "r": 46}, {"u": "AlfaSkill", "s": 19, "r": 51}, {"u": "Nur-75", "s": 16, "r": 67}, {"u": "Mr_SergeyAntonov", "s": 15, "r": 77}, {"u": "vasilisslens389", "s": 11, "r": 94}, {"u": "mimimishka2507", "s": 10, "r": 100}, {"u": "AlexNed", "s": 9, "r": 106}, {"u": "Michailovish72", "s": 8, "r": 116}, {"u": "marsel1515", "s": 7, "r": 119}, {"u": "Maks-73", "s": 4, "r": 129}, {"u": "ARTURIO999", "s": 2, "r": 142}, {"u": "AMOH-PA", "s": 0, "r": 151}], "pts": 199, "disabled": false}, {"id": "xyIXU4So", "n": "203rd Lichess Rapid League 2 Team Battle", "d": "2026-08-10T16:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 35, "r": 5}, {"u": "kolbox68", "s": 28, "r": 10}, {"u": "ARTURIO999", "s": 16, "r": 24}, {"u": "Alanas", "s": 16, "r": 27}, {"u": "Rumoleg", "s": 9, "r": 42}, {"u": "Vitylob", "s": 6, "r": 59}, {"u": "Mr_SergeyAntonov", "s": 4, "r": 73}, {"u": "Karabas-Barabass", "s": 3, "r": 77}, {"u": "toropovsky", "s": 2, "r": 86}, {"u": "bekamasalbekov", "s": 1, "r": 91}], "pts": 120, "disabled": false}, {"id": "zP6fq7O5", "n": "Lichess Liga 4C Team Battle", "d": "2026-08-09T18:01:00Z", "p": [{"u": "Obsidian_destroyer", "s": 76, "r": 1}, {"u": "sewatop4ik", "s": 44, "r": 4}, {"u": "Sino_17Tiger", "s": 40, "r": 6}, {"u": "kolbox68", "s": 24, "r": 25}, {"u": "Michailovish72", "s": 23, "r": 29}, {"u": "Nur-75", "s": 22, "r": 31}, {"u": "Magic-chess-nocturne", "s": 13, "r": 53}, {"u": "AMOH-PA", "s": 10, "r": 63}, {"u": "ROMSO1981", "s": 10, "r": 64}, {"u": "grand58", "s": 4, "r": 75}, {"u": "Ilnarik", "s": 3, "r": 78}, {"u": "nyr-75", "s": 0, "r": 87}, {"u": "Nastyaa_2005", "s": 0, "r": 88}], "pts": 269, "disabled": false}, {"id": "amAUSzK3", "n": "Lichess Liga 3C Team Battle", "d": "2026-08-06T18:01:00Z", "p": [{"u": "sewatop4ik", "s": 38, "r": 9}, {"u": "nyr-75", "s": 27, "r": 29}, {"u": "Mr_SergeyAntonov", "s": 26, "r": 31}, {"u": "kolbox68", "s": 19, "r": 54}, {"u": "Rumoleg", "s": 19, "r": 55}, {"u": "grand58", "s": 10, "r": 91}, {"u": "AMOH-PA", "s": 8, "r": 94}, {"u": "Magic-chess-nocturne", "s": 8, "r": 98}, {"u": "Ilnarik", "s": 6, "r": 102}, {"u": "AlfaSkill", "s": 6, "r": 110}, {"u": "ROMSO1981", "s": 4, "r": 113}, {"u": "ARTURIO999", "s": 4, "r": 114}, {"u": "Alanas", "s": 3, "r": 120}], "pts": 178, "disabled": false}, {"id": "3GuRbuEW", "n": "202nd Lichess Rapid League 3A Team Battle", "d": "2026-08-03T16:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 57, "r": 1}, {"u": "Alanas", "s": 39, "r": 3}, {"u": "Nur-75", "s": 26, "r": 6}, {"u": "Vitylob", "s": 24, "r": 7}, {"u": "Mr_SergeyAntonov", "s": 18, "r": 18}, {"u": "kolbox68", "s": 17, "r": 20}, {"u": "AMOH-PA", "s": 13, "r": 28}, {"u": "Karabas-Barabass", "s": 7, "r": 52}, {"u": "ARTURIO999", "s": 5, "r": 61}], "pts": 206, "disabled": false}, {"id": "iYQoXLWW", "n": "Lichess Liga 3A Team Battle", "d": "2026-08-02T18:01:00Z", "p": [{"u": "Obsidian_destroyer", "s": 56, "r": 1}, {"u": "kolbox68", "s": 24, "r": 16}, {"u": "Nur-75", "s": 23, "r": 20}, {"u": "Vitylob", "s": 20, "r": 31}, {"u": "Mr_SergeyAntonov", "s": 19, "r": 33}, {"u": "AMOH-PA", "s": 15, "r": 54}, {"u": "Rumoleg", "s": 12, "r": 73}, {"u": "AlexNed", "s": 12, "r": 76}, {"u": "ROMSO1981", "s": 7, "r": 99}, {"u": "Maks-73", "s": 2, "r": 122}, {"u": "Capablanka543", "s": 2, "r": 127}, {"u": "dark_angel_rinat", "s": 1, "r": 133}, {"u": "john181982", "s": 0, "r": 135}, {"u": "Karabas-Barabass", "s": 0, "r": 142}], "pts": 193, "disabled": false}, {"id": "JqU1w4MB", "n": "Lichess Liga 4A Team Battle", "d": "2026-07-30T18:01:00Z", "p": [{"u": "Obsidian_destroyer", "s": 74, "r": 2}, {"u": "Melastry", "s": 51, "r": 5}, {"u": "Blagoslavlenny_Bogom", "s": 39, "r": 7}, {"u": "Mr_SergeyAntonov", "s": 32, "r": 10}, {"u": "Ilnarik", "s": 25, "r": 22}, {"u": "kolbox68", "s": 25, "r": 23}, {"u": "nyr-75", "s": 23, "r": 26}, {"u": "happy_cloud", "s": 21, "r": 32}, {"u": "Rumoleg", "s": 20, "r": 34}, {"u": "john181982", "s": 17, "r": 40}, {"u": "AlfaSkill", "s": 16, "r": 45}, {"u": "AlexNed", "s": 13, "r": 60}, {"u": "Karayanov-Myxammed_5", "s": 0, "r": 90}, {"u": "ROMSO1981", "s": 0, "r": 91}, {"u": "DokTor_ii", "s": 0, "r": 92}], "pts": 356, "disabled": false}, {"id": "SjX8PMY6", "n": "201st Lichess Rapid League 2 Team Battle", "d": "2026-07-27T16:01:00Z", "p": [{"u": "Vitylob", "s": 21, "r": 19}, {"u": "Karayanov-Myxammed_5", "s": 19, "r": 26}, {"u": "kolbox68", "s": 17, "r": 30}, {"u": "happy_cloud", "s": 11, "r": 43}, {"u": "AMOH-PA", "s": 9, "r": 50}, {"u": "ARTURIO999", "s": 9, "r": 51}, {"u": "Melastry", "s": 2, "r": 82}, {"u": "Mr_SergeyAntonov", "s": 0, "r": 109}], "pts": 88, "disabled": false}, {"id": "KBgSCl7b", "n": "Lichess Liga 5B Team Battle", "d": "2026-07-26T18:01:00Z", "p": [{"u": "Alanas", "s": 50, "r": 2}, {"u": "nyr-75", "s": 24, "r": 11}, {"u": "kolbox68", "s": 24, "r": 12}, {"u": "Karayanov-Myxammed_5", "s": 20, "r": 19}, {"u": "Mr_SergeyAntonov", "s": 13, "r": 40}, {"u": "ROMSO1981", "s": 11, "r": 50}, {"u": "grand58", "s": 9, "r": 57}, {"u": "Melastry", "s": 8, "r": 58}, {"u": "john181982", "s": 6, "r": 68}, {"u": "DokTor_ii", "s": 2, "r": 80}, {"u": "TN2013", "s": 0, "r": 97}], "pts": 167, "disabled": false}, {"id": "jv1X07E6", "n": "Lichess Liga 4A Team Battle", "d": "2026-07-23T18:01:00Z", "p": [{"u": "Legenda_75", "s": 16, "r": 33}, {"u": "ROMSO1981", "s": 14, "r": 37}, {"u": "happy_cloud", "s": 12, "r": 45}, {"u": "kolbox68", "s": 7, "r": 60}, {"u": "AlexNed", "s": 6, "r": 66}, {"u": "Nastyaa_2005", "s": 0, "r": 82}, {"u": "Mr_SergeyAntonov", "s": 0, "r": 85}, {"u": "ARTURIO999", "s": 0, "r": 87}, {"u": "Andrei-77", "s": 0, "r": 90}, {"u": "ronaldo4147", "s": 0, "r": 91}], "pts": 55, "disabled": false}, {"id": "iZHQ27l2", "n": "200th Lichess Rapid League 1 Team Battle", "d": "2026-07-20T16:01:00Z", "p": [{"u": "Melastry", "s": 34, "r": 6}, {"u": "Mr_SergeyAntonov", "s": 30, "r": 16}, {"u": "sewatop4ik2", "s": 25, "r": 25}, {"u": "kolbox68", "s": 24, "r": 32}, {"u": "Vitylob", "s": 22, "r": 36}, {"u": "ROMSO1981", "s": 22, "r": 37}, {"u": "AlfaSkill", "s": 22, "r": 39}, {"u": "AlexNed", "s": 10, "r": 123}, {"u": "AMOH-PA", "s": 9, "r": 128}, {"u": "ivann07k", "s": 7, "r": 164}, {"u": "toropovsky", "s": 4, "r": 219}, {"u": "DokTor_ii", "s": 2, "r": 285}, {"u": "ARTURIO999", "s": 0, "r": 317}, {"u": "Mr_Gri17", "s": 0, "r": 328}, {"u": "Pskov-Rulit", "s": 0, "r": 384}, {"u": "omad_urazov", "s": 0, "r": 399}], "pts": 211, "disabled": false}, {"id": "4O5xJA8V", "n": "Lichess Liga 3A Team Battle", "d": "2026-07-19T18:01:00Z", "p": [{"u": "nyr-75", "s": 27, "r": 24}, {"u": "kolbox68", "s": 23, "r": 35}, {"u": "Schach_i_Matt", "s": 19, "r": 50}, {"u": "ROMSO1981", "s": 16, "r": 65}, {"u": "Pskov-Rulit", "s": 13, "r": 77}, {"u": "AMOH-PA", "s": 13, "r": 78}, {"u": "AlfaSkill", "s": 3, "r": 105}, {"u": "Nastyaa_2005", "s": 0, "r": 122}, {"u": "Michailovish72", "s": 0, "r": 138}], "pts": 114, "disabled": false}, {"id": "YMKqN8PU", "n": "Lichess Liga 3A Team Battle", "d": "2026-07-16T18:01:00Z", "p": [{"u": "Alanas", "s": 30, "r": 12}, {"u": "Rumoleg", "s": 27, "r": 19}, {"u": "AMOH-PA", "s": 26, "r": 20}, {"u": "Melastry", "s": 25, "r": 21}, {"u": "Legenda_75", "s": 23, "r": 32}, {"u": "kolbox68", "s": 20, "r": 44}, {"u": "Mr_SergeyAntonov", "s": 20, "r": 45}, {"u": "AlfaSkill", "s": 18, "r": 60}, {"u": "ROMSO1981", "s": 11, "r": 103}, {"u": "dark_angel_rinat", "s": 11, "r": 105}, {"u": "vasilisslens389", "s": 9, "r": 112}, {"u": "DokTor_ii", "s": 8, "r": 118}, {"u": "john181982", "s": 5, "r": 133}, {"u": "ARTURIO999", "s": 2, "r": 152}], "pts": 235, "disabled": false}, {"id": "IvUtrYa3", "n": "Орда Arena", "d": "2026-07-15T17:00:00Z", "p": [{"u": "ARTURIO999", "s": 6, "r": 1}, {"u": "sewatop4ik2", "s": 2, "r": 2}, {"u": "Mr_SergeyAntonov", "s": 2, "r": 3}, {"u": "AlfaSkill", "s": 0, "r": 4}, {"u": "Pskov-Rulit", "s": 0, "r": 5}, {"u": "afonya-ag", "s": 0, "r": 6}, {"u": "friendly_w", "s": 0, "r": 7}, {"u": "ROMSO1981", "s": 0, "r": 8}, {"u": "Koshamber1", "s": 0, "r": 9}], "pts": 10, "disabled": false}, {"id": "iQErzJWb", "n": "199th Lichess Rapid League 1 Team Battle", "d": "2026-07-13T16:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 56, "r": 2}, {"u": "AlfaSkill", "s": 40, "r": 6}, {"u": "TIMURDUSHATOV", "s": 24, "r": 40}, {"u": "Mr_SergeyAntonov", "s": 19, "r": 62}, {"u": "Melastry", "s": 19, "r": 63}, {"u": "ARTURIO999", "s": 17, "r": 70}, {"u": "sewatop4ik2", "s": 12, "r": 103}, {"u": "Legenda_75", "s": 12, "r": 108}, {"u": "ROMSO1981", "s": 10, "r": 120}, {"u": "kolbox68", "s": 8, "r": 136}, {"u": "Alanas", "s": 6, "r": 152}, {"u": "AMOH-PA", "s": 6, "r": 157}, {"u": "Koshamber1", "s": 6, "r": 163}, {"u": "afonya-ag", "s": 5, "r": 175}, {"u": "Nobodyknowsif", "s": 4, "r": 182}, {"u": "Yousif_Othman", "s": 4, "r": 190}, {"u": "CALLIA_P", "s": 3, "r": 194}, {"u": "Karabas-Barabass", "s": 3, "r": 206}, {"u": "Elizaveta1812", "s": 0, "r": 297}, {"u": "Ivanchik79", "s": 0, "r": 307}, {"u": "omad_urazov", "s": 0, "r": 320}], "pts": 254, "disabled": false}, {"id": "FIJDJKpu", "n": "Lichess Liga 3C Team Battle", "d": "2026-07-12T18:01:00Z", "p": [{"u": "Alanas", "s": 34, "r": 7}, {"u": "OstavaisaSoboi", "s": 28, "r": 16}, {"u": "kolbox68", "s": 25, "r": 22}, {"u": "Melastry", "s": 21, "r": 37}, {"u": "ROMSO1981", "s": 18, "r": 54}, {"u": "Schach_i_Matt", "s": 17, "r": 55}, {"u": "AlfaSkill", "s": 17, "r": 59}, {"u": "AMOH-PA", "s": 14, "r": 67}, {"u": "ARTURIO999", "s": 13, "r": 71}, {"u": "Yousif_Othman", "s": 2, "r": 128}, {"u": "mimimishka2507", "s": 0, "r": 156}], "pts": 189, "disabled": false}, {"id": "xZwbQdHe", "n": "Lichess Bundesliga2 Team Battle", "d": "2026-07-09T18:01:00Z", "p": [{"u": "Mr_SergeyAntonov", "s": 30, "r": 62}, {"u": "kolbox68", "s": 28, "r": 75}, {"u": "nyr-75", "s": 25, "r": 91}, {"u": "Alanas", "s": 24, "r": 94}, {"u": "Rumoleg", "s": 22, "r": 110}, {"u": "ROMSO1981", "s": 16, "r": 141}, {"u": "Blagoslavlenny_Bogom", "s": 14, "r": 153}, {"u": "Melastry", "s": 10, "r": 165}, {"u": "ARTURIO999", "s": 10, "r": 167}, {"u": "grand58", "s": 8, "r": 180}, {"u": "AMOH-PA", "s": 7, "r": 182}, {"u": "Ilnarik", "s": 5, "r": 195}, {"u": "Nobodyknowsif", "s": 0, "r": 260}], "pts": 199, "disabled": false}, {"id": "lZvxvsj3", "n": "198th Lichess Rapid League 2 Team Battle", "d": "2026-07-06T16:01:00Z", "p": [{"u": "Blagoslavlenny_Bogom", "s": 54, "r": 2}, {"u": "Alanas", "s": 27, "r": 9}, {"u": "Nur-75", "s": 23, "r": 17}, {"u": "Melastry", "s": 19, "r": 26}, {"u": "kolbox68", "s": 19, "r": 30}, {"u": "Pskov-Rulit", "s": 18, "r": 31}, {"u": "Mr_SergeyAntonov", "s": 16, "r": 35}, {"u": "ROMSO1981", "s": 14, "r": 39}, {"u": "Rumoleg", "s": 11, "r": 49}, {"u": "AlfaSkill", "s": 10, "r": 58}, {"u": "Vitylob", "s": 7, "r": 71}, {"u": "mimimishka2507", "s": 6, "r": 72}, {"u": "Koshamber1", "s": 6, "r": 74}, {"u": "ARTURIO999", "s": 4, "r": 80}, {"u": "vasilisslens389", "s": 2, "r": 94}, {"u": "Dinamovec331", "s": 0, "r": 128}, {"u": "Michailovish72", "s": 0, "r": 132}], "pts": 236, "disabled": false}, {"id": "73oocuRX", "n": "Lichess Liga 3B Team Battle", "d": "2026-07-05T18:01:00Z", "p": [{"u": "Blagoslavlenny_Bogom", "s": 73, "r": 1}, {"u": "Obsidian_destroyer", "s": 43, "r": 3}, {"u": "sewatop4ik2", "s": 32, "r": 8}, {"u": "Pskov-Rulit", "s": 18, "r": 41}, {"u": "ROMSO1981", "s": 16, "r": 48}, {"u": "Mr_SergeyAntonov", "s": 14, "r": 55}, {"u": "kolbox68", "s": 14, "r": 57}, {"u": "AlfaSkill", "s": 12, "r": 64}, {"u": "Ilnarik", "s": 8, "r": 74}, {"u": "Rumoleg", "s": 7, "r": 78}, {"u": "rioclab", "s": 7, "r": 79}, {"u": "vasilisslens389", "s": 4, "r": 96}, {"u": "mimimishka2507", "s": 3, "r": 98}, {"u": "Nastyaa_2005", "s": 0, "r": 107}, {"u": "ARTURIO999", "s": 0, "r": 108}], "pts": 251, "disabled": false}, {"id": "kPrVAcgT", "n": "ПРИЗОВОЙ БУДУЩИЕ СМ от АА Arena", "d": "2026-07-04T17:00:00Z", "p": [{"u": "Alanas", "s": 37, "r": 1}, {"u": "Melastry", "s": 29, "r": 2}, {"u": "Mr_SergeyAntonov", "s": 21, "r": 3}, {"u": "nyr-75", "s": 17, "r": 4}, {"u": "ROMSO1981", "s": 14, "r": 5}, {"u": "AlfaSkill", "s": 14, "r": 6}, {"u": "Lubumchuk_Boga", "s": 12, "r": 7}, {"u": "Victorvondoom312", "s": 11, "r": 8}, {"u": "john181982", "s": 8, "r": 9}, {"u": "happy_cloud", "s": 7, "r": 10}, {"u": "mimimishka2507", "s": 6, "r": 11}, {"u": "Vitylob", "s": 6, "r": 12}, {"u": "kolbox68", "s": 6, "r": 13}, {"u": "Groza_strimerov", "s": 0, "r": 14}, {"u": "nilyin", "s": 0, "r": 15}, {"u": "afonya-ag", "s": 0, "r": 16}, {"u": "Karabas-Barabass", "s": 0, "r": 17}], "pts": 188, "disabled": false}, {"id": "BKsgFoO6", "n": "Lichess Liga 4A Team Battle", "d": "2026-07-02T18:01:00Z", "p": [{"u": "Blagoslavlenny_Bogom", "s": 73, "r": 1}, {"u": "Obsidian_destroyer", "s": 40, "r": 5}, {"u": "Melastry", "s": 26, "r": 15}, {"u": "kolbox68", "s": 21, "r": 32}, {"u": "Mr_SergeyAntonov", "s": 19, "r": 40}, {"u": "AlfaSkill", "s": 14, "r": 49}, {"u": "Legenda_75", "s": 14, "r": 50}, {"u": "AMOH-PA", "s": 13, "r": 52}, {"u": "Vitylob", "s": 12, "r": 58}, {"u": "ROMSO1981", "s": 12, "r": 60}, {"u": "vasilisslens389", "s": 6, "r": 79}, {"u": "Alanas", "s": 0, "r": 103}, {"u": "ARTURIO999", "s": 0, "r": 107}, {"u": "Fortu72", "s": 0, "r": 108}, {"u": "afonya-ag", "s": 0, "r": 112}, {"u": "Pskov-Rulit", "s": 0, "r": 115}], "pts": 250, "disabled": false}, {"id": "HTNx8Vo4", "n": "197th Lichess Rapid League 1 Team Battle", "d": "2026-06-29T16:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 37, "r": 4}, {"u": "sewatop4ik2", "s": 36, "r": 7}, {"u": "kolbox68", "s": 18, "r": 43}, {"u": "ROMSO1981", "s": 13, "r": 70}, {"u": "Nur-75", "s": 9, "r": 105}, {"u": "AlfaSkill", "s": 6, "r": 129}, {"u": "CYBOPOBVVVMCM", "s": 5, "r": 137}, {"u": "Melastry", "s": 3, "r": 175}, {"u": "sigma_creaper", "s": 3, "r": 177}, {"u": "omad_urazov", "s": 2, "r": 207}, {"u": "afonya-ag", "s": 2, "r": 217}, {"u": "Dinamovec331", "s": 1, "r": 236}, {"u": "ARTURIO999", "s": 0, "r": 244}, {"u": "Fortu72", "s": 0, "r": 253}, {"u": "IT_man_person", "s": 0, "r": 277}, {"u": "Ergun_98", "s": 0, "r": 282}, {"u": "Karabas-Barabass", "s": 0, "r": 314}, {"u": "Knightmare76", "s": 0, "r": 341}], "pts": 135, "disabled": false}, {"id": "ZDtJFvwC", "n": "Lichess Liga 4C Team Battle", "d": "2026-06-28T18:01:00Z", "p": [{"u": "sewatop4ik2", "s": 38, "r": 12}, {"u": "nyr-75", "s": 25, "r": 30}, {"u": "kolbox68", "s": 25, "r": 31}, {"u": "AlfaSkill", "s": 24, "r": 35}, {"u": "Victorvondoom312", "s": 23, "r": 36}, {"u": "Mr_SergeyAntonov", "s": 21, "r": 43}, {"u": "Rumoleg", "s": 19, "r": 50}, {"u": "ROMSO1981", "s": 14, "r": 62}, {"u": "john181982", "s": 13, "r": 64}, {"u": "vasilisslens389", "s": 12, "r": 70}, {"u": "Karabas-Barabass", "s": 4, "r": 88}, {"u": "ARTURIO999", "s": 0, "r": 101}], "pts": 218, "disabled": false}, {"id": "aAKKgJjC", "n": "ПРИЗОВОЙ ТУРНИР МАЙ Arena", "d": "2026-06-27T18:45:00Z", "p": [{"u": "OstavaisaSoboi", "s": 21, "r": 1}, {"u": "Lubumchuk_Boga", "s": 17, "r": 2}, {"u": "Melastry", "s": 14, "r": 3}, {"u": "Victorvondoom312", "s": 10, "r": 4}, {"u": "ROMSO1981", "s": 9, "r": 5}, {"u": "AlfaSkill", "s": 8, "r": 6}, {"u": "Mr_SergeyAntonov", "s": 7, "r": 7}, {"u": "AMOH-PA", "s": 7, "r": 8}, {"u": "Rumoleg", "s": 6, "r": 9}, {"u": "Nur-75", "s": 6, "r": 10}, {"u": "Karabas-Barabass", "s": 2, "r": 11}, {"u": "mimimishka2507", "s": 1, "r": 12}, {"u": "kolbox68", "s": 1, "r": 13}, {"u": "Amerika_MK", "s": 0, "r": 14}, {"u": "AlexNed", "s": 0, "r": 15}, {"u": "bekamasalbekov", "s": 0, "r": 16}], "pts": 109, "disabled": false}, {"id": "0EDZ8LCT", "n": "Lichess Liga 3B Team Battle", "d": "2026-06-25T18:01:00Z", "p": [{"u": "kolbox68", "s": 29, "r": 22}, {"u": "Nur-75", "s": 26, "r": 31}, {"u": "Mr_SergeyAntonov", "s": 25, "r": 35}, {"u": "marut1", "s": 14, "r": 76}, {"u": "AMOH-PA", "s": 13, "r": 84}, {"u": "AlfaSkill", "s": 13, "r": 85}, {"u": "ARTURIO999", "s": 11, "r": 89}, {"u": "Rumoleg", "s": 11, "r": 91}, {"u": "ROMSO1981", "s": 10, "r": 95}, {"u": "afonya-ag", "s": 9, "r": 99}, {"u": "Melastry", "s": 6, "r": 112}, {"u": "ocentir", "s": 1, "r": 131}, {"u": "Andrey092005", "s": 0, "r": 133}, {"u": "mimimishka2507", "s": 0, "r": 134}, {"u": "vasilisslens389", "s": 0, "r": 148}], "pts": 168, "disabled": false}, {"id": "LGTrchMB", "n": "196th Lichess Rapid League 1 Team Battle", "d": "2026-06-22T16:01:00Z", "p": [{"u": "Alanas", "s": 52, "r": 1}, {"u": "OstavaisaSoboi", "s": 42, "r": 3}, {"u": "sewatop4ik2", "s": 30, "r": 11}, {"u": "Vitylob", "s": 28, "r": 18}, {"u": "Melastry", "s": 21, "r": 41}, {"u": "AMOH-PA", "s": 20, "r": 47}, {"u": "kolbox68", "s": 20, "r": 51}, {"u": "ROMSO1981", "s": 13, "r": 101}, {"u": "AlfaSkill", "s": 12, "r": 115}, {"u": "Drochia", "s": 8, "r": 141}, {"u": "CYBOPOBVVVMCM", "s": 6, "r": 165}, {"u": "Dinamovec331", "s": 2, "r": 249}, {"u": "ARTURIO999", "s": 0, "r": 279}, {"u": "mimimishka2507", "s": 0, "r": 314}, {"u": "omad_urazov", "s": 0, "r": 353}], "pts": 254, "disabled": false}, {"id": "kqszcf5M", "n": "Lichess Liga 3B Team Battle", "d": "2026-06-21T18:01:00Z", "p": [{"u": "Obsidian_destroyer", "s": 33, "r": 7}, {"u": "sidbnskan_4d567", "s": 25, "r": 16}, {"u": "Mr_SergeyAntonov", "s": 24, "r": 21}, {"u": "Melastry", "s": 22, "r": 27}, {"u": "Nur-75", "s": 16, "r": 59}, {"u": "grand58", "s": 16, "r": 61}, {"u": "Pskov-Rulit", "s": 14, "r": 65}, {"u": "AlfaSkill", "s": 13, "r": 70}, {"u": "marut1", "s": 10, "r": 82}, {"u": "ROMSO1981", "s": 10, "r": 86}, {"u": "AMOH-PA", "s": 8, "r": 88}, {"u": "Rumoleg", "s": 7, "r": 92}, {"u": "masha_chess_rocket", "s": 5, "r": 105}, {"u": "afonya-ag", "s": 4, "r": 112}, {"u": "Andrey092005", "s": 0, "r": 134}, {"u": "ARTURIO999", "s": 0, "r": 142}, {"u": "mimimishka2507", "s": 0, "r": 147}, {"u": "marsel1515", "s": 0, "r": 150}, {"u": "CarlsenForcek", "s": 0, "r": 152}, {"u": "Karabas-Barabass", "s": 0, "r": 166}], "pts": 207, "disabled": false}, {"id": "AlRsRZP3", "n": "Lichess Liga 3C Team Battle", "d": "2026-06-18T18:01:00Z", "p": [{"u": "Melastry", "s": 39, "r": 14}, {"u": "Alanas", "s": 38, "r": 15}, {"u": "kolbox68", "s": 37, "r": 17}, {"u": "sewatop4ik2", "s": 33, "r": 26}, {"u": "sidbnskan_4d567", "s": 29, "r": 32}, {"u": "Mr_SergeyAntonov", "s": 26, "r": 50}, {"u": "Legenda_75", "s": 21, "r": 71}, {"u": "AlfaSkill", "s": 20, "r": 80}, {"u": "AMOH-PA", "s": 19, "r": 81}, {"u": "Vitylob", "s": 19, "r": 84}, {"u": "dark_angel_rinat", "s": 18, "r": 88}, {"u": "AlexNed", "s": 16, "r": 98}, {"u": "Victorvondoom312", "s": 13, "r": 102}, {"u": "Daniil2013m", "s": 9, "r": 126}, {"u": "CarlsenForcek", "s": 8, "r": 133}, {"u": "masha_chess_rocket", "s": 7, "r": 135}, {"u": "Michailovish72", "s": 3, "r": 157}, {"u": "ronaldo4147", "s": 2, "r": 165}, {"u": "ARTURIO999", "s": 0, "r": 174}, {"u": "Pskov-Rulit", "s": 0, "r": 184}, {"u": "Knightmare76", "s": 0, "r": 194}], "pts": 357, "disabled": false}, {"id": "9dMqVKNv", "n": "Призовой от НуРаСа Arena", "d": "2026-06-17T20:40:00Z", "p": [{"u": "Alanas", "s": 38, "r": 1}, {"u": "nyr-75", "s": 12, "r": 2}, {"u": "Mr_SergeyAntonov", "s": 10, "r": 3}, {"u": "Dinamovec331", "s": 8, "r": 4}, {"u": "dark_angel_rinat", "s": 4, "r": 5}, {"u": "Danielgilan", "s": 2, "r": 6}, {"u": "Groza_strimerov", "s": 2, "r": 7}, {"u": "AMOH-PA", "s": 0, "r": 8}, {"u": "sidbnskan_4d567", "s": 0, "r": 9}], "pts": 76, "disabled": false}, {"id": "lZJwewyu", "n": "195th Lichess Rapid League 1 Team Battle", "d": "2026-06-15T16:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 36, "r": 7}, {"u": "kolbox68", "s": 36, "r": 9}, {"u": "Alanas", "s": 32, "r": 12}, {"u": "Artek228", "s": 28, "r": 18}, {"u": "Mr_SergeyAntonov", "s": 24, "r": 27}, {"u": "Vitylob", "s": 24, "r": 29}, {"u": "AMOH-PA", "s": 20, "r": 37}, {"u": "AlfaSkill", "s": 20, "r": 39}, {"u": "CYBOPOBVVVMCM", "s": 12, "r": 75}, {"u": "OlegGrozniy", "s": 8, "r": 106}, {"u": "Karabas-Barabass", "s": 6, "r": 123}, {"u": "Melastry", "s": 4, "r": 147}, {"u": "Gustov_Vlad", "s": 4, "r": 157}, {"u": "ROMSO1981", "s": 4, "r": 161}, {"u": "ARTURIO999", "s": 0, "r": 241}, {"u": "on_oral_on", "s": 0, "r": 266}, {"u": "Knightmare76", "s": 0, "r": 290}, {"u": "furkan_isik4b", "s": 0, "r": 313}], "pts": 258, "disabled": false}, {"id": "SmRc33Eo", "n": "Lichess Bundesliga2 Team Battle", "d": "2026-06-14T18:01:00Z", "p": [{"u": "Alanas", "s": 28, "r": 38}, {"u": "AlfaSkill", "s": 25, "r": 63}, {"u": "AMOH-PA", "s": 23, "r": 76}, {"u": "Daniil2013m", "s": 22, "r": 80}, {"u": "Nur-75", "s": 18, "r": 111}, {"u": "kolbox68", "s": 17, "r": 118}, {"u": "ARTURIO999", "s": 12, "r": 154}, {"u": "ROMSO1981", "s": 11, "r": 158}, {"u": "mimimishka2507", "s": 8, "r": 181}, {"u": "Melastry", "s": 4, "r": 225}, {"u": "Andrey092005", "s": 2, "r": 251}, {"u": "Pskov-Rulit", "s": 0, "r": 286}, {"u": "CarlsenForcek", "s": 0, "r": 290}], "pts": 170, "disabled": false}, {"id": "gTmNRfRm", "n": "Lichess Liga 3C Team Battle", "d": "2026-06-11T18:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 36, "r": 4}, {"u": "Alanas", "s": 32, "r": 6}, {"u": "kolbox68", "s": 30, "r": 8}, {"u": "sewatop4ik2", "s": 25, "r": 16}, {"u": "AMOH-PA", "s": 25, "r": 17}, {"u": "AlfaSkill", "s": 20, "r": 35}, {"u": "grand58", "s": 18, "r": 40}, {"u": "masha_chess_rocket", "s": 18, "r": 44}, {"u": "Legenda_75", "s": 16, "r": 52}, {"u": "ROMSO1981", "s": 12, "r": 69}, {"u": "Melastry", "s": 11, "r": 72}, {"u": "mimimishka2507", "s": 6, "r": 101}, {"u": "ARTURIO999", "s": 2, "r": 126}, {"u": "Roma_Alex", "s": 0, "r": 134}, {"u": "CarlsenForcek", "s": 0, "r": 137}], "pts": 251, "disabled": false}, {"id": "tAHVtW9V", "n": "ПРИЗОВОЙ ТУРНИР от НуРаСы Arena", "d": "2026-06-09T21:30:00Z", "p": [{"u": "Alanas", "s": 33, "r": 1}, {"u": "Arsenalsky0000", "s": 17, "r": 2}, {"u": "Lubumchuk_Boga", "s": 14, "r": 3}, {"u": "Legenda_75", "s": 10, "r": 4}, {"u": "kolbox68", "s": 10, "r": 5}, {"u": "Mr_SergeyAntonov", "s": 10, "r": 6}, {"u": "sidbnskan_4d567", "s": 4, "r": 7}, {"u": "Budanov_Aleksandr", "s": 2, "r": 8}, {"u": "ROMSO1981", "s": 2, "r": 9}], "pts": 102, "disabled": false}, {"id": "uyVru7pt", "n": "194th Lichess Rapid League 1 Team Battle", "d": "2026-06-08T16:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 67, "r": 1}, {"u": "Alanas", "s": 26, "r": 24}, {"u": "sewatop4ik2", "s": 21, "r": 44}, {"u": "ARTURIO999", "s": 20, "r": 48}, {"u": "ROMSO1981", "s": 18, "r": 61}, {"u": "kolbox68", "s": 17, "r": 69}, {"u": "Mr_SergeyAntonov", "s": 17, "r": 70}, {"u": "mimimishka2507", "s": 15, "r": 88}, {"u": "Kot_Bayunn", "s": 15, "r": 92}, {"u": "Melastry", "s": 12, "r": 113}, {"u": "AMOH-PA", "s": 9, "r": 148}, {"u": "Vitylob", "s": 8, "r": 159}, {"u": "Koshamber1", "s": 8, "r": 168}, {"u": "dikiy_al", "s": 5, "r": 208}, {"u": "AlexNed", "s": 4, "r": 221}, {"u": "Knightmare76", "s": 0, "r": 428}], "pts": 262, "disabled": false}, {"id": "TjcZCEC9", "n": "Lichess Liga 3A Team Battle", "d": "2026-06-07T18:01:00Z", "p": [{"u": "sewatop4ik2", "s": 62, "r": 2}, {"u": "OstavaisaSoboi", "s": 48, "r": 5}, {"u": "Alanas", "s": 44, "r": 8}, {"u": "Melastry", "s": 30, "r": 24}, {"u": "Nur-75", "s": 23, "r": 50}, {"u": "kolbox68", "s": 19, "r": 72}, {"u": "AMOH-PA", "s": 14, "r": 91}, {"u": "ROMSO1981", "s": 11, "r": 107}, {"u": "Michailovish72", "s": 4, "r": 135}, {"u": "Pskov-Rulit", "s": 4, "r": 140}, {"u": "AlexNed", "s": 4, "r": 141}, {"u": "Kuwazu", "s": 2, "r": 148}, {"u": "Roma_Alex", "s": 0, "r": 153}, {"u": "ARTURIO999", "s": 0, "r": 155}, {"u": "CarlsenForcek", "s": 0, "r": 160}], "pts": 265, "disabled": false}, {"id": "bNPjrUs2", "n": "Lichess Liga 3A Team Battle", "d": "2026-06-04T18:01:00Z", "p": [{"u": "Alanas", "s": 52, "r": 2}, {"u": "Andrey092005", "s": 35, "r": 6}, {"u": "Mr_SergeyAntonov", "s": 22, "r": 18}, {"u": "nyr-75", "s": 19, "r": 29}, {"u": "AMOH-PA", "s": 15, "r": 46}, {"u": "kolbox68", "s": 14, "r": 59}, {"u": "AlfaSkill", "s": 13, "r": 65}, {"u": "ROMSO1981", "s": 12, "r": 68}, {"u": "john181982", "s": 11, "r": 70}, {"u": "AlexNed", "s": 2, "r": 115}, {"u": "Karabas-Barabass", "s": 2, "r": 116}, {"u": "ARTURIO999", "s": 0, "r": 120}, {"u": "CarlsenForcek", "s": 0, "r": 125}], "pts": 197, "disabled": false}, {"id": "QaZ4YIFt", "n": "РАПИД-1-ЛУЧШИЕ Arena", "d": "2026-06-01T19:00:00Z", "p": [{"u": "Alanas", "s": 61, "r": 1}, {"u": "OstavaisaSoboi", "s": 33, "r": 2}, {"u": "mimimishka2507", "s": 26, "r": 3}, {"u": "ASGGB", "s": 25, "r": 4}, {"u": "Groza_strimerov", "s": 22, "r": 5}, {"u": "Lubumchuk_Boga", "s": 18, "r": 6}, {"u": "kolbox68", "s": 14, "r": 7}, {"u": "Mr_SergeyAntonov", "s": 13, "r": 8}, {"u": "Legenda_75", "s": 9, "r": 9}, {"u": "ROMSO1981", "s": 8, "r": 10}, {"u": "CarlsenForcek", "s": 8, "r": 11}, {"u": "ARTURIO999", "s": 8, "r": 12}, {"u": "Michailovish72", "s": 3, "r": 13}, {"u": "Dimas040681", "s": 2, "r": 14}, {"u": "AMOH-PA", "s": 1, "r": 15}, {"u": "nyr-75", "s": 0, "r": 16}, {"u": "Griezzman_Frenc", "s": 0, "r": 17}, {"u": "DokTor_ii", "s": 0, "r": 18}, {"u": "Knightmare76", "s": 0, "r": 19}, {"u": "dikiy_al", "s": 0, "r": 20}], "pts": 251, "disabled": false}, {"id": "dKtRCBuq", "n": "193rd Lichess Rapid League 1 Team Battle", "d": "2026-06-01T16:01:00Z", "p": [{"u": "Alanas", "s": 49, "r": 1}, {"u": "OstavaisaSoboi", "s": 44, "r": 3}, {"u": "mimimishka2507", "s": 42, "r": 4}, {"u": "ROMSO1981", "s": 28, "r": 16}, {"u": "sewatop4ik2", "s": 26, "r": 23}, {"u": "Mr_SergeyAntonov", "s": 24, "r": 31}, {"u": "AMOH-PA", "s": 21, "r": 44}, {"u": "ARTURIO999", "s": 18, "r": 57}, {"u": "Kot_Bayunn", "s": 17, "r": 58}, {"u": "kolbox68", "s": 17, "r": 61}, {"u": "uxurty", "s": 10, "r": 118}, {"u": "TN2013", "s": 3, "r": 234}, {"u": "dikiy_al", "s": 3, "r": 242}, {"u": "Pskov-Rulit", "s": 0, "r": 304}], "pts": 302, "disabled": false}, {"id": "bXQaitP0", "n": "Lichess Liga 3B Team Battle", "d": "2026-05-31T18:01:00Z", "p": [{"u": "Alanas", "s": 24, "r": 15}, {"u": "Melastry", "s": 19, "r": 32}, {"u": "sewatop4ik2", "s": 19, "r": 33}, {"u": "kolbox68", "s": 19, "r": 38}, {"u": "Legenda_75", "s": 17, "r": 48}, {"u": "Mr_SergeyAntonov", "s": 16, "r": 56}, {"u": "Ilnarik", "s": 12, "r": 78}, {"u": "AMOH-PA", "s": 11, "r": 90}, {"u": "ROMSO1981", "s": 10, "r": 97}, {"u": "AlfaSkill", "s": 10, "r": 99}, {"u": "grand58", "s": 8, "r": 105}, {"u": "masha_chess_rocket", "s": 5, "r": 121}, {"u": "ARTURIO999", "s": 0, "r": 148}, {"u": "john181982", "s": 0, "r": 155}], "pts": 170, "disabled": false}, {"id": "3CfGgsen", "n": "в честь 100 подписчиков Arena", "d": "2026-05-29T19:22:00Z", "p": [{"u": "Andrey092005", "s": 65, "r": 1}, {"u": "mimimishka2507", "s": 56, "r": 2}, {"u": "Alanas", "s": 48, "r": 3}, {"u": "OstavaisaSoboi", "s": 31, "r": 4}, {"u": "Arsenalsky0000", "s": 29, "r": 5}, {"u": "Groza_strimerov", "s": 27, "r": 6}, {"u": "Mr_SergeyAntonov", "s": 27, "r": 7}, {"u": "Pskov-Rulit", "s": 26, "r": 8}, {"u": "Lubumchuk_Boga", "s": 24, "r": 9}, {"u": "kolbox68", "s": 22, "r": 10}, {"u": "nyr-75", "s": 19, "r": 11}, {"u": "Griezzman_Frenc", "s": 17, "r": 12}, {"u": "john181982", "s": 13, "r": 13}, {"u": "AMOH-PA", "s": 9, "r": 14}, {"u": "Budanov_Aleksandr", "s": 7, "r": 15}, {"u": "sidbnskan_4d567", "s": 7, "r": 16}, {"u": "afonya-ag", "s": 5, "r": 17}, {"u": "NokiA33109", "s": 3, "r": 18}, {"u": "ARTURIO999", "s": 3, "r": 19}, {"u": "AlexNed", "s": 2, "r": 20}, {"u": "Sparta75", "s": 0, "r": 21}, {"u": "sewatop4ik2", "s": 0, "r": 22}, {"u": "Melastry", "s": 0, "r": 23}, {"u": "ivann07k", "s": 0, "r": 24}, {"u": "AlfaSkill", "s": 0, "r": 25}], "pts": 440, "disabled": false}, {"id": "TCPCkoWv", "n": "Lichess Liga 3C Team Battle", "d": "2026-05-28T18:01:00Z", "p": [{"u": "mimimishka2507", "s": 43, "r": 8}, {"u": "Melastry", "s": 31, "r": 24}, {"u": "kolbox68", "s": 31, "r": 27}, {"u": "Andrey092005", "s": 27, "r": 39}, {"u": "Legenda_75", "s": 27, "r": 40}, {"u": "AMOH-PA", "s": 20, "r": 73}, {"u": "AlexNed", "s": 15, "r": 93}, {"u": "Pskov-Rulit", "s": 11, "r": 107}, {"u": "Mr_SergeyAntonov", "s": 8, "r": 121}, {"u": "ROMSO1981", "s": 8, "r": 126}, {"u": "AlfaSkill", "s": 4, "r": 141}, {"u": "ARTURIO999", "s": 0, "r": 159}, {"u": "Capablanka543", "s": 0, "r": 165}, {"u": "grand58", "s": 0, "r": 174}, {"u": "masha_chess_rocket", "s": 0, "r": 176}], "pts": 225, "disabled": false}, {"id": "DimsMHsA", "n": "192nd Lichess Rapid League 1 Team Battle", "d": "2026-05-25T16:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 37, "r": 8}, {"u": "sewatop4ik2", "s": 29, "r": 20}, {"u": "kolbox68", "s": 28, "r": 24}, {"u": "Alanas", "s": 26, "r": 30}, {"u": "ROMSO1981", "s": 23, "r": 38}, {"u": "Fortu72", "s": 22, "r": 46}, {"u": "AlfaSkill", "s": 22, "r": 48}, {"u": "Mr_SergeyAntonov", "s": 19, "r": 62}, {"u": "ARTURIO999", "s": 10, "r": 133}, {"u": "Rumoleg", "s": 9, "r": 136}, {"u": "sidbnskan_4d567", "s": 9, "r": 146}, {"u": "Capablanka543", "s": 8, "r": 155}, {"u": "DokTor_ii", "s": 4, "r": 218}, {"u": "mimimishka2507", "s": 0, "r": 313}, {"u": "ArhVerik", "s": 0, "r": 353}, {"u": "Melastry", "s": 0, "r": 370}, {"u": "SIMENCOM1", "s": 0, "r": 380}], "pts": 246, "disabled": false}, {"id": "Ypg9VaLB", "n": "Lichess Liga 4B Team Battle", "d": "2026-05-24T18:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 41, "r": 2}, {"u": "sewatop4ik2", "s": 31, "r": 10}, {"u": "Nur-75", "s": 28, "r": 15}, {"u": "Mr_SergeyAntonov", "s": 26, "r": 17}, {"u": "kolbox68", "s": 19, "r": 37}, {"u": "AlfaSkill", "s": 15, "r": 50}, {"u": "john181982", "s": 11, "r": 64}, {"u": "ROMSO1981", "s": 10, "r": 68}, {"u": "Melastry", "s": 9, "r": 72}, {"u": "Boardway", "s": 9, "r": 74}, {"u": "Alihan0516", "s": 6, "r": 82}, {"u": "masha_chess_rocket", "s": 6, "r": 84}, {"u": "DokTor_ii", "s": 6, "r": 85}, {"u": "AlexNed", "s": 5, "r": 87}, {"u": "ARTURIO999", "s": 4, "r": 97}, {"u": "mimimishka2507", "s": 3, "r": 103}, {"u": "AMOH-PA", "s": 3, "r": 107}, {"u": "Ilnarik", "s": 0, "r": 120}], "pts": 232, "disabled": false}, {"id": "r5Z5LoM0", "n": "Lichess Liga 5B Team Battle", "d": "2026-05-21T18:01:00Z", "p": [{"u": "kolbox68", "s": 28, "r": 7}, {"u": "Andrey092005", "s": 25, "r": 10}, {"u": "Mr_SergeyAntonov", "s": 24, "r": 12}, {"u": "Melastry", "s": 22, "r": 17}, {"u": "Legenda_75", "s": 21, "r": 20}, {"u": "AlfaSkill", "s": 21, "r": 25}, {"u": "grand58", "s": 18, "r": 35}, {"u": "ROMSO1981", "s": 14, "r": 51}, {"u": "AlexNed", "s": 10, "r": 69}, {"u": "ARTURIO999", "s": 8, "r": 76}, {"u": "Fraza_YO", "s": 8, "r": 82}, {"u": "sidbnskan_4d567", "s": 4, "r": 106}, {"u": "afonya-ag", "s": 2, "r": 118}], "pts": 205, "disabled": false}, {"id": "NMJ4waeT", "n": "191st Lichess Rapid League 2 Team Battle", "d": "2026-05-18T16:01:00Z", "p": [{"u": "sewatop4ik2", "s": 41, "r": 4}, {"u": "OstavaisaSoboi", "s": 39, "r": 7}, {"u": "mimimishka2507", "s": 37, "r": 8}, {"u": "AlfaSkill", "s": 28, "r": 22}, {"u": "Kot_Bayunn", "s": 27, "r": 27}, {"u": "kolbox68", "s": 26, "r": 32}, {"u": "Vitylob", "s": 26, "r": 33}, {"u": "ROMSO1981", "s": 23, "r": 44}, {"u": "DokTor_ii", "s": 16, "r": 73}, {"u": "Melastry", "s": 13, "r": 83}, {"u": "AlexNed", "s": 12, "r": 85}, {"u": "Mr_SergeyAntonov", "s": 11, "r": 88}, {"u": "ARTURIO999", "s": 9, "r": 91}], "pts": 308, "disabled": false}, {"id": "BTCIkJvg", "n": "Lichess Liga 6B Team Battle", "d": "2026-05-17T18:01:00Z", "p": [{"u": "Andrey092005", "s": 51, "r": 4}, {"u": "Mr_SergeyAntonov", "s": 41, "r": 8}, {"u": "Legenda_75", "s": 35, "r": 11}, {"u": "sidbnskan_4d567", "s": 28, "r": 23}, {"u": "kolbox68", "s": 25, "r": 30}, {"u": "Pskov-Rulit", "s": 23, "r": 35}, {"u": "Melastry", "s": 22, "r": 37}, {"u": "ARTURIO999", "s": 20, "r": 42}, {"u": "AlfaSkill", "s": 17, "r": 47}, {"u": "ROMSO1981", "s": 15, "r": 51}, {"u": "Ilnarik", "s": 14, "r": 55}, {"u": "DokTor_ii", "s": 14, "r": 57}, {"u": "Vitylob", "s": 4, "r": 77}, {"u": "grand58", "s": 2, "r": 85}], "pts": 311, "disabled": false}, {"id": "gAAnVJKh", "n": "Lichess Liga 7B Team Battle", "d": "2026-05-14T18:01:00Z", "p": [{"u": "sewatop4ik2", "s": 35, "r": 2}, {"u": "kolbox68", "s": 18, "r": 17}, {"u": "ROMSO1981", "s": 14, "r": 23}, {"u": "john181982", "s": 13, "r": 25}, {"u": "nyr-75", "s": 13, "r": 27}, {"u": "IlayKachsheev", "s": 12, "r": 29}, {"u": "ARTURIO999", "s": 10, "r": 34}, {"u": "AlexNed", "s": 3, "r": 55}, {"u": "Ilnarik", "s": 3, "r": 56}, {"u": "Karabas-Barabass", "s": 2, "r": 61}, {"u": "Mr_SergeyAntonov", "s": 0, "r": 68}, {"u": "Peter_Klein", "s": 0, "r": 71}], "pts": 123, "disabled": false}, {"id": "PwW1rGFN", "n": "ПРИЗОВОЙ ТУРНИР ИМЕНИННИКА Arena", "d": "2026-05-13T20:15:00Z", "p": [{"u": "OstavaisaSoboi", "s": 27, "r": 1}, {"u": "Klimenko_Sergey_IM", "s": 26, "r": 2}, {"u": "kolbox68", "s": 20, "r": 3}, {"u": "Mr_SergeyAntonov", "s": 19, "r": 4}, {"u": "Pskov-Rulit", "s": 12, "r": 5}, {"u": "afonya-ag", "s": 8, "r": 6}, {"u": "DarkoCG", "s": 8, "r": 7}, {"u": "Nur-75", "s": 6, "r": 8}, {"u": "ROMSO1981", "s": 6, "r": 9}, {"u": "Daniil2013m", "s": 5, "r": 10}, {"u": "Lubumchuk_Boga", "s": 4, "r": 11}, {"u": "RockN8N", "s": 3, "r": 12}, {"u": "AlexNed", "s": 2, "r": 13}, {"u": "Budanov_Aleksandr", "s": 1, "r": 14}, {"u": "sidbnskan_4d567", "s": 0, "r": 15}], "pts": 147, "disabled": false}, {"id": "3H5GcQbi", "n": "ДР Arena", "d": "2026-05-13T18:00:00Z", "p": [{"u": "Melastry", "s": 15, "r": 1}, {"u": "Mr_SergeyAntonov", "s": 13, "r": 2}, {"u": "ARTURIO999", "s": 12, "r": 3}, {"u": "OstavaisaSoboi", "s": 10, "r": 4}, {"u": "Lubumchuk_Boga", "s": 8, "r": 5}, {"u": "kolbox68", "s": 5, "r": 6}, {"u": "Ilnarik", "s": 3, "r": 7}, {"u": "mimimishka2507", "s": 2, "r": 8}, {"u": "RockN8N", "s": 2, "r": 9}, {"u": "Karabas-Barabass", "s": 2, "r": 10}, {"u": "afonya-ag", "s": 1, "r": 11}, {"u": "Andrey092005", "s": 0, "r": 12}, {"u": "Nur-75", "s": 0, "r": 13}, {"u": "Marti_McFly_1", "s": 0, "r": 14}, {"u": "Daniil2013m", "s": 0, "r": 15}, {"u": "DarkoCG", "s": 0, "r": 16}, {"u": "ROMSO1981", "s": 0, "r": 17}, {"u": "m0ns1t", "s": 0, "r": 18}], "pts": 73, "disabled": false}, {"id": "RS2M3u6w", "n": "С ДНЮХОЙ Arena", "d": "2026-05-11T21:17:07.168Z", "p": [{"u": "Mr_SergeyAntonov", "s": 9, "r": 1}, {"u": "ARTURIO999", "s": 8, "r": 2}, {"u": "sidbnskan_4d567", "s": 3, "r": 3}, {"u": "Lubumchuk_Boga", "s": 2, "r": 4}, {"u": "nyr-75", "s": 2, "r": 5}], "pts": 24, "disabled": false}]; // СЮДА БУДЕТ ВСТАВЛЯТЬ ДАННЫЕ PYTHON СКРИПТ
+let data = [{"id": "kWFzF2JR", "n": "Lichess Liga 3A Team Battle", "d": "2026-08-13T18:01:00Z", "p": [{"u": "sewatop4ik", "s": 29, "r": 12}, {"u": "Obsidian_destroyer", "s": 25, "r": 19}, {"u": "kolbox68", "s": 24, "r": 29}, {"u": "Rumoleg", "s": 20, "r": 46}, {"u": "AlfaSkill", "s": 19, "r": 51}, {"u": "Nur-75", "s": 16, "r": 67}, {"u": "Mr_SergeyAntonov", "s": 15, "r": 77}, {"u": "vasilisslens389", "s": 11, "r": 94}, {"u": "mimimishka2507", "s": 10, "r": 100}, {"u": "AlexNed", "s": 9, "r": 106}, {"u": "Michailovish72", "s": 8, "r": 116}, {"u": "marsel1515", "s": 7, "r": 119}, {"u": "Maks-73", "s": 4, "r": 129}, {"u": "ARTURIO999", "s": 2, "r": 142}, {"u": "AMOH-PA", "s": 0, "r": 151}], "pts": 199, "disabled": false}, {"id": "xyIXU4So", "n": "203rd Lichess Rapid League 2 Team Battle", "d": "2026-08-10T16:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 35, "r": 5}, {"u": "kolbox68", "s": 28, "r": 10}, {"u": "ARTURIO999", "s": 16, "r": 24}, {"u": "Alanas", "s": 16, "r": 27}, {"u": "Rumoleg", "s": 9, "r": 42}, {"u": "Vitylob", "s": 6, "r": 59}, {"u": "Mr_SergeyAntonov", "s": 4, "r": 73}, {"u": "Karabas-Barabass", "s": 3, "r": 77}, {"u": "toropovsky", "s": 2, "r": 86}, {"u": "bekamasalbekov", "s": 1, "r": 91}], "pts": 120, "disabled": false}, {"id": "zP6fq7O5", "n": "Lichess Liga 4C Team Battle", "d": "2026-08-09T18:01:00Z", "p": [{"u": "Obsidian_destroyer", "s": 76, "r": 1}, {"u": "sewatop4ik", "s": 44, "r": 4}, {"u": "Sino_17Tiger", "s": 40, "r": 6}, {"u": "kolbox68", "s": 24, "r": 25}, {"u": "Michailovish72", "s": 23, "r": 29}, {"u": "Nur-75", "s": 22, "r": 31}, {"u": "Magic-chess-nocturne", "s": 13, "r": 53}, {"u": "AMOH-PA", "s": 10, "r": 63}, {"u": "ROMSO1981", "s": 10, "r": 64}, {"u": "grand58", "s": 4, "r": 75}, {"u": "Ilnarik", "s": 3, "r": 78}, {"u": "nyr-75", "s": 0, "r": 87}, {"u": "Nastyaa_2005", "s": 0, "r": 88}], "pts": 269, "disabled": false}, {"id": "amAUSzK3", "n": "Lichess Liga 3C Team Battle", "d": "2026-08-06T18:01:00Z", "p": [{"u": "sewatop4ik", "s": 38, "r": 9}, {"u": "nyr-75", "s": 27, "r": 29}, {"u": "Mr_SergeyAntonov", "s": 26, "r": 31}, {"u": "kolbox68", "s": 19, "r": 54}, {"u": "Rumoleg", "s": 19, "r": 55}, {"u": "grand58", "s": 10, "r": 91}, {"u": "AMOH-PA", "s": 8, "r": 94}, {"u": "Magic-chess-nocturne", "s": 8, "r": 98}, {"u": "Ilnarik", "s": 6, "r": 102}, {"u": "AlfaSkill", "s": 6, "r": 110}, {"u": "ROMSO1981", "s": 4, "r": 113}, {"u": "ARTURIO999", "s": 4, "r": 114}, {"u": "Alanas", "s": 3, "r": 120}], "pts": 178, "disabled": false}, {"id": "3GuRbuEW", "n": "202nd Lichess Rapid League 3A Team Battle", "d": "2026-08-03T16:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 57, "r": 1}, {"u": "Alanas", "s": 39, "r": 3}, {"u": "Nur-75", "s": 26, "r": 6}, {"u": "Vitylob", "s": 24, "r": 7}, {"u": "Mr_SergeyAntonov", "s": 18, "r": 18}, {"u": "kolbox68", "s": 17, "r": 20}, {"u": "AMOH-PA", "s": 13, "r": 28}, {"u": "Karabas-Barabass", "s": 7, "r": 52}, {"u": "ARTURIO999", "s": 5, "r": 61}], "pts": 206, "disabled": false}, {"id": "iYQoXLWW", "n": "Lichess Liga 3A Team Battle", "d": "2026-08-02T18:01:00Z", "p": [{"u": "Obsidian_destroyer", "s": 56, "r": 1}, {"u": "kolbox68", "s": 24, "r": 16}, {"u": "Nur-75", "s": 23, "r": 20}, {"u": "Vitylob", "s": 20, "r": 31}, {"u": "Mr_SergeyAntonov", "s": 19, "r": 33}, {"u": "AMOH-PA", "s": 15, "r": 54}, {"u": "Rumoleg", "s": 12, "r": 73}, {"u": "AlexNed", "s": 12, "r": 76}, {"u": "ROMSO1981", "s": 7, "r": 99}, {"u": "Maks-73", "s": 2, "r": 122}, {"u": "Capablanka543", "s": 2, "r": 127}, {"u": "dark_angel_rinat", "s": 1, "r": 133}, {"u": "john181982", "s": 0, "r": 135}, {"u": "Karabas-Barabass", "s": 0, "r": 142}], "pts": 193, "disabled": false}, {"id": "JqU1w4MB", "n": "Lichess Liga 4A Team Battle", "d": "2026-07-30T18:01:00Z", "p": [{"u": "Obsidian_destroyer", "s": 74, "r": 2}, {"u": "Melastry", "s": 51, "r": 5}, {"u": "Blagoslavlenny_Bogom", "s": 39, "r": 7}, {"u": "Mr_SergeyAntonov", "s": 32, "r": 10}, {"u": "Ilnarik", "s": 25, "r": 22}, {"u": "kolbox68", "s": 25, "r": 23}, {"u": "nyr-75", "s": 23, "r": 26}, {"u": "happy_cloud", "s": 21, "r": 32}, {"u": "Rumoleg", "s": 20, "r": 34}, {"u": "john181982", "s": 17, "r": 40}, {"u": "AlfaSkill", "s": 16, "r": 45}, {"u": "AlexNed", "s": 13, "r": 60}, {"u": "Karayanov-Myxammed_5", "s": 0, "r": 90}, {"u": "ROMSO1981", "s": 0, "r": 91}, {"u": "DokTor_ii", "s": 0, "r": 92}], "pts": 356, "disabled": false}, {"id": "SjX8PMY6", "n": "201st Lichess Rapid League 2 Team Battle", "d": "2026-07-27T16:01:00Z", "p": [{"u": "Vitylob", "s": 21, "r": 19}, {"u": "Karayanov-Myxammed_5", "s": 19, "r": 26}, {"u": "kolbox68", "s": 17, "r": 30}, {"u": "happy_cloud", "s": 11, "r": 43}, {"u": "AMOH-PA", "s": 9, "r": 50}, {"u": "ARTURIO999", "s": 9, "r": 51}, {"u": "Melastry", "s": 2, "r": 82}, {"u": "Mr_SergeyAntonov", "s": 0, "r": 109}], "pts": 88, "disabled": false}, {"id": "KBgSCl7b", "n": "Lichess Liga 5B Team Battle", "d": "2026-07-26T18:01:00Z", "p": [{"u": "Alanas", "s": 50, "r": 2}, {"u": "nyr-75", "s": 24, "r": 11}, {"u": "kolbox68", "s": 24, "r": 12}, {"u": "Karayanov-Myxammed_5", "s": 20, "r": 19}, {"u": "Mr_SergeyAntonov", "s": 13, "r": 40}, {"u": "ROMSO1981", "s": 11, "r": 50}, {"u": "grand58", "s": 9, "r": 57}, {"u": "Melastry", "s": 8, "r": 58}, {"u": "john181982", "s": 6, "r": 68}, {"u": "DokTor_ii", "s": 2, "r": 80}, {"u": "TN2013", "s": 0, "r": 97}], "pts": 167, "disabled": false}, {"id": "jv1X07E6", "n": "Lichess Liga 4A Team Battle", "d": "2026-07-23T18:01:00Z", "p": [{"u": "Legenda_75", "s": 16, "r": 33}, {"u": "ROMSO1981", "s": 14, "r": 37}, {"u": "happy_cloud", "s": 12, "r": 45}, {"u": "kolbox68", "s": 7, "r": 60}, {"u": "AlexNed", "s": 6, "r": 66}, {"u": "Nastyaa_2005", "s": 0, "r": 82}, {"u": "Mr_SergeyAntonov", "s": 0, "r": 85}, {"u": "ARTURIO999", "s": 0, "r": 87}, {"u": "Andrei-77", "s": 0, "r": 90}, {"u": "ronaldo4147", "s": 0, "r": 91}], "pts": 55, "disabled": false}, {"id": "iZHQ27l2", "n": "200th Lichess Rapid League 1 Team Battle", "d": "2026-07-20T16:01:00Z", "p": [{"u": "Melastry", "s": 34, "r": 6}, {"u": "Mr_SergeyAntonov", "s": 30, "r": 16}, {"u": "sewatop4ik2", "s": 25, "r": 25}, {"u": "kolbox68", "s": 24, "r": 32}, {"u": "Vitylob", "s": 22, "r": 36}, {"u": "ROMSO1981", "s": 22, "r": 37}, {"u": "AlfaSkill", "s": 22, "r": 39}, {"u": "AlexNed", "s": 10, "r": 123}, {"u": "AMOH-PA", "s": 9, "r": 128}, {"u": "ivann07k", "s": 7, "r": 164}, {"u": "toropovsky", "s": 4, "r": 219}, {"u": "DokTor_ii", "s": 2, "r": 285}, {"u": "ARTURIO999", "s": 0, "r": 317}, {"u": "Mr_Gri17", "s": 0, "r": 328}, {"u": "Pskov-Rulit", "s": 0, "r": 384}, {"u": "omad_urazov", "s": 0, "r": 399}], "pts": 211, "disabled": false}, {"id": "4O5xJA8V", "n": "Lichess Liga 3A Team Battle", "d": "2026-07-19T18:01:00Z", "p": [{"u": "nyr-75", "s": 27, "r": 24}, {"u": "kolbox68", "s": 23, "r": 35}, {"u": "Schach_i_Matt", "s": 19, "r": 50}, {"u": "ROMSO1981", "s": 16, "r": 65}, {"u": "Pskov-Rulit", "s": 13, "r": 77}, {"u": "AMOH-PA", "s": 13, "r": 78}, {"u": "AlfaSkill", "s": 3, "r": 105}, {"u": "Nastyaa_2005", "s": 0, "r": 122}, {"u": "Michailovish72", "s": 0, "r": 138}], "pts": 114, "disabled": false}, {"id": "YMKqN8PU", "n": "Lichess Liga 3A Team Battle", "d": "2026-07-16T18:01:00Z", "p": [{"u": "Alanas", "s": 30, "r": 12}, {"u": "Rumoleg", "s": 27, "r": 19}, {"u": "AMOH-PA", "s": 26, "r": 20}, {"u": "Melastry", "s": 25, "r": 21}, {"u": "Legenda_75", "s": 23, "r": 32}, {"u": "kolbox68", "s": 20, "r": 44}, {"u": "Mr_SergeyAntonov", "s": 20, "r": 45}, {"u": "AlfaSkill", "s": 18, "r": 60}, {"u": "ROMSO1981", "s": 11, "r": 103}, {"u": "dark_angel_rinat", "s": 11, "r": 105}, {"u": "vasilisslens389", "s": 9, "r": 112}, {"u": "DokTor_ii", "s": 8, "r": 118}, {"u": "john181982", "s": 5, "r": 133}, {"u": "ARTURIO999", "s": 2, "r": 152}], "pts": 235, "disabled": false}, {"id": "IvUtrYa3", "n": "Орда Arena", "d": "2026-07-15T17:00:00Z", "p": [{"u": "ARTURIO999", "s": 6, "r": 1}, {"u": "sewatop4ik2", "s": 2, "r": 2}, {"u": "Mr_SergeyAntonov", "s": 2, "r": 3}, {"u": "AlfaSkill", "s": 0, "r": 4}, {"u": "Pskov-Rulit", "s": 0, "r": 5}, {"u": "afonya-ag", "s": 0, "r": 6}, {"u": "friendly_w", "s": 0, "r": 7}, {"u": "ROMSO1981", "s": 0, "r": 8}, {"u": "Koshamber1", "s": 0, "r": 9}], "pts": 10, "disabled": false}, {"id": "iQErzJWb", "n": "199th Lichess Rapid League 1 Team Battle", "d": "2026-07-13T16:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 56, "r": 2}, {"u": "AlfaSkill", "s": 40, "r": 6}, {"u": "TIMURDUSHATOV", "s": 24, "r": 40}, {"u": "Mr_SergeyAntonov", "s": 19, "r": 62}, {"u": "Melastry", "s": 19, "r": 63}, {"u": "ARTURIO999", "s": 17, "r": 70}, {"u": "sewatop4ik2", "s": 12, "r": 103}, {"u": "Legenda_75", "s": 12, "r": 108}, {"u": "ROMSO1981", "s": 10, "r": 120}, {"u": "kolbox68", "s": 8, "r": 136}, {"u": "Alanas", "s": 6, "r": 152}, {"u": "AMOH-PA", "s": 6, "r": 157}, {"u": "Koshamber1", "s": 6, "r": 163}, {"u": "afonya-ag", "s": 5, "r": 175}, {"u": "Nobodyknowsif", "s": 4, "r": 182}, {"u": "Yousif_Othman", "s": 4, "r": 190}, {"u": "CALLIA_P", "s": 3, "r": 194}, {"u": "Karabas-Barabass", "s": 3, "r": 206}, {"u": "Elizaveta1812", "s": 0, "r": 297}, {"u": "Ivanchik79", "s": 0, "r": 307}, {"u": "omad_urazov", "s": 0, "r": 320}], "pts": 254, "disabled": false}, {"id": "FIJDJKpu", "n": "Lichess Liga 3C Team Battle", "d": "2026-07-12T18:01:00Z", "p": [{"u": "Alanas", "s": 34, "r": 7}, {"u": "OstavaisaSoboi", "s": 28, "r": 16}, {"u": "kolbox68", "s": 25, "r": 22}, {"u": "Melastry", "s": 21, "r": 37}, {"u": "ROMSO1981", "s": 18, "r": 54}, {"u": "Schach_i_Matt", "s": 17, "r": 55}, {"u": "AlfaSkill", "s": 17, "r": 59}, {"u": "AMOH-PA", "s": 14, "r": 67}, {"u": "ARTURIO999", "s": 13, "r": 71}, {"u": "Yousif_Othman", "s": 2, "r": 128}, {"u": "mimimishka2507", "s": 0, "r": 156}], "pts": 189, "disabled": false}, {"id": "xZwbQdHe", "n": "Lichess Bundesliga2 Team Battle", "d": "2026-07-09T18:01:00Z", "p": [{"u": "Mr_SergeyAntonov", "s": 30, "r": 62}, {"u": "kolbox68", "s": 28, "r": 75}, {"u": "nyr-75", "s": 25, "r": 91}, {"u": "Alanas", "s": 24, "r": 94}, {"u": "Rumoleg", "s": 22, "r": 110}, {"u": "ROMSO1981", "s": 16, "r": 141}, {"u": "Blagoslavlenny_Bogom", "s": 14, "r": 153}, {"u": "Melastry", "s": 10, "r": 165}, {"u": "ARTURIO999", "s": 10, "r": 167}, {"u": "grand58", "s": 8, "r": 180}, {"u": "AMOH-PA", "s": 7, "r": 182}, {"u": "Ilnarik", "s": 5, "r": 195}, {"u": "Nobodyknowsif", "s": 0, "r": 260}], "pts": 199, "disabled": false}, {"id": "lZvxvsj3", "n": "198th Lichess Rapid League 2 Team Battle", "d": "2026-07-06T16:01:00Z", "p": [{"u": "Blagoslavlenny_Bogom", "s": 54, "r": 2}, {"u": "Alanas", "s": 27, "r": 9}, {"u": "Nur-75", "s": 23, "r": 17}, {"u": "Melastry", "s": 19, "r": 26}, {"u": "kolbox68", "s": 19, "r": 30}, {"u": "Pskov-Rulit", "s": 18, "r": 31}, {"u": "Mr_SergeyAntonov", "s": 16, "r": 35}, {"u": "ROMSO1981", "s": 14, "r": 39}, {"u": "Rumoleg", "s": 11, "r": 49}, {"u": "AlfaSkill", "s": 10, "r": 58}, {"u": "Vitylob", "s": 7, "r": 71}, {"u": "mimimishka2507", "s": 6, "r": 72}, {"u": "Koshamber1", "s": 6, "r": 74}, {"u": "ARTURIO999", "s": 4, "r": 80}, {"u": "vasilisslens389", "s": 2, "r": 94}, {"u": "Dinamovec331", "s": 0, "r": 128}, {"u": "Michailovish72", "s": 0, "r": 132}], "pts": 236, "disabled": false}, {"id": "73oocuRX", "n": "Lichess Liga 3B Team Battle", "d": "2026-07-05T18:01:00Z", "p": [{"u": "Blagoslavlenny_Bogom", "s": 73, "r": 1}, {"u": "Obsidian_destroyer", "s": 43, "r": 3}, {"u": "sewatop4ik2", "s": 32, "r": 8}, {"u": "Pskov-Rulit", "s": 18, "r": 41}, {"u": "ROMSO1981", "s": 16, "r": 48}, {"u": "Mr_SergeyAntonov", "s": 14, "r": 55}, {"u": "kolbox68", "s": 14, "r": 57}, {"u": "AlfaSkill", "s": 12, "r": 64}, {"u": "Ilnarik", "s": 8, "r": 74}, {"u": "Rumoleg", "s": 7, "r": 78}, {"u": "rioclab", "s": 7, "r": 79}, {"u": "vasilisslens389", "s": 4, "r": 96}, {"u": "mimimishka2507", "s": 3, "r": 98}, {"u": "Nastyaa_2005", "s": 0, "r": 107}, {"u": "ARTURIO999", "s": 0, "r": 108}], "pts": 251, "disabled": false}, {"id": "kPrVAcgT", "n": "ПРИЗОВОЙ БУДУЩИЕ СМ от АА Arena", "d": "2026-07-04T17:00:00Z", "p": [{"u": "Alanas", "s": 37, "r": 1}, {"u": "Melastry", "s": 29, "r": 2}, {"u": "Mr_SergeyAntonov", "s": 21, "r": 3}, {"u": "nyr-75", "s": 17, "r": 4}, {"u": "ROMSO1981", "s": 14, "r": 5}, {"u": "AlfaSkill", "s": 14, "r": 6}, {"u": "Lubumchuk_Boga", "s": 12, "r": 7}, {"u": "Victorvondoom312", "s": 11, "r": 8}, {"u": "john181982", "s": 8, "r": 9}, {"u": "happy_cloud", "s": 7, "r": 10}, {"u": "mimimishka2507", "s": 6, "r": 11}, {"u": "Vitylob", "s": 6, "r": 12}, {"u": "kolbox68", "s": 6, "r": 13}, {"u": "Groza_strimerov", "s": 0, "r": 14}, {"u": "nilyin", "s": 0, "r": 15}, {"u": "afonya-ag", "s": 0, "r": 16}, {"u": "Karabas-Barabass", "s": 0, "r": 17}], "pts": 188, "disabled": false}, {"id": "BKsgFoO6", "n": "Lichess Liga 4A Team Battle", "d": "2026-07-02T18:01:00Z", "p": [{"u": "Blagoslavlenny_Bogom", "s": 73, "r": 1}, {"u": "Obsidian_destroyer", "s": 40, "r": 5}, {"u": "Melastry", "s": 26, "r": 15}, {"u": "kolbox68", "s": 21, "r": 32}, {"u": "Mr_SergeyAntonov", "s": 19, "r": 40}, {"u": "AlfaSkill", "s": 14, "r": 49}, {"u": "Legenda_75", "s": 14, "r": 50}, {"u": "AMOH-PA", "s": 13, "r": 52}, {"u": "Vitylob", "s": 12, "r": 58}, {"u": "ROMSO1981", "s": 12, "r": 60}, {"u": "vasilisslens389", "s": 6, "r": 79}, {"u": "Alanas", "s": 0, "r": 103}, {"u": "ARTURIO999", "s": 0, "r": 107}, {"u": "Fortu72", "s": 0, "r": 108}, {"u": "afonya-ag", "s": 0, "r": 112}, {"u": "Pskov-Rulit", "s": 0, "r": 115}], "pts": 250, "disabled": false}, {"id": "HTNx8Vo4", "n": "197th Lichess Rapid League 1 Team Battle", "d": "2026-06-29T16:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 37, "r": 4}, {"u": "sewatop4ik2", "s": 36, "r": 7}, {"u": "kolbox68", "s": 18, "r": 43}, {"u": "ROMSO1981", "s": 13, "r": 70}, {"u": "Nur-75", "s": 9, "r": 105}, {"u": "AlfaSkill", "s": 6, "r": 129}, {"u": "CYBOPOBVVVMCM", "s": 5, "r": 137}, {"u": "Melastry", "s": 3, "r": 175}, {"u": "sigma_creaper", "s": 3, "r": 177}, {"u": "omad_urazov", "s": 2, "r": 207}, {"u": "afonya-ag", "s": 2, "r": 217}, {"u": "Dinamovec331", "s": 1, "r": 236}, {"u": "ARTURIO999", "s": 0, "r": 244}, {"u": "Fortu72", "s": 0, "r": 253}, {"u": "IT_man_person", "s": 0, "r": 277}, {"u": "Ergun_98", "s": 0, "r": 282}, {"u": "Karabas-Barabass", "s": 0, "r": 314}, {"u": "Knightmare76", "s": 0, "r": 341}], "pts": 135, "disabled": false}, {"id": "ZDtJFvwC", "n": "Lichess Liga 4C Team Battle", "d": "2026-06-28T18:01:00Z", "p": [{"u": "sewatop4ik2", "s": 38, "r": 12}, {"u": "nyr-75", "s": 25, "r": 30}, {"u": "kolbox68", "s": 25, "r": 31}, {"u": "AlfaSkill", "s": 24, "r": 35}, {"u": "Victorvondoom312", "s": 23, "r": 36}, {"u": "Mr_SergeyAntonov", "s": 21, "r": 43}, {"u": "Rumoleg", "s": 19, "r": 50}, {"u": "ROMSO1981", "s": 14, "r": 62}, {"u": "john181982", "s": 13, "r": 64}, {"u": "vasilisslens389", "s": 12, "r": 70}, {"u": "Karabas-Barabass", "s": 4, "r": 88}, {"u": "ARTURIO999", "s": 0, "r": 101}], "pts": 218, "disabled": false}, {"id": "aAKKgJjC", "n": "ПРИЗОВОЙ ТУРНИР МАЙ Arena", "d": "2026-06-27T18:45:00Z", "p": [{"u": "OstavaisaSoboi", "s": 21, "r": 1}, {"u": "Lubumchuk_Boga", "s": 17, "r": 2}, {"u": "Melastry", "s": 14, "r": 3}, {"u": "Victorvondoom312", "s": 10, "r": 4}, {"u": "ROMSO1981", "s": 9, "r": 5}, {"u": "AlfaSkill", "s": 8, "r": 6}, {"u": "Mr_SergeyAntonov", "s": 7, "r": 7}, {"u": "AMOH-PA", "s": 7, "r": 8}, {"u": "Rumoleg", "s": 6, "r": 9}, {"u": "Nur-75", "s": 6, "r": 10}, {"u": "Karabas-Barabass", "s": 2, "r": 11}, {"u": "mimimishka2507", "s": 1, "r": 12}, {"u": "kolbox68", "s": 1, "r": 13}, {"u": "Amerika_MK", "s": 0, "r": 14}, {"u": "AlexNed", "s": 0, "r": 15}, {"u": "bekamasalbekov", "s": 0, "r": 16}], "pts": 109, "disabled": false}, {"id": "0EDZ8LCT", "n": "Lichess Liga 3B Team Battle", "d": "2026-06-25T18:01:00Z", "p": [{"u": "kolbox68", "s": 29, "r": 22}, {"u": "Nur-75", "s": 26, "r": 31}, {"u": "Mr_SergeyAntonov", "s": 25, "r": 35}, {"u": "marut1", "s": 14, "r": 76}, {"u": "AMOH-PA", "s": 13, "r": 84}, {"u": "AlfaSkill", "s": 13, "r": 85}, {"u": "ARTURIO999", "s": 11, "r": 89}, {"u": "Rumoleg", "s": 11, "r": 91}, {"u": "ROMSO1981", "s": 10, "r": 95}, {"u": "afonya-ag", "s": 9, "r": 99}, {"u": "Melastry", "s": 6, "r": 112}, {"u": "ocentir", "s": 1, "r": 131}, {"u": "Andrey092005", "s": 0, "r": 133}, {"u": "mimimishka2507", "s": 0, "r": 134}, {"u": "vasilisslens389", "s": 0, "r": 148}], "pts": 168, "disabled": false}, {"id": "LGTrchMB", "n": "196th Lichess Rapid League 1 Team Battle", "d": "2026-06-22T16:01:00Z", "p": [{"u": "Alanas", "s": 52, "r": 1}, {"u": "OstavaisaSoboi", "s": 42, "r": 3}, {"u": "sewatop4ik2", "s": 30, "r": 11}, {"u": "Vitylob", "s": 28, "r": 18}, {"u": "Melastry", "s": 21, "r": 41}, {"u": "AMOH-PA", "s": 20, "r": 47}, {"u": "kolbox68", "s": 20, "r": 51}, {"u": "ROMSO1981", "s": 13, "r": 101}, {"u": "AlfaSkill", "s": 12, "r": 115}, {"u": "Drochia", "s": 8, "r": 141}, {"u": "CYBOPOBVVVMCM", "s": 6, "r": 165}, {"u": "Dinamovec331", "s": 2, "r": 249}, {"u": "ARTURIO999", "s": 0, "r": 279}, {"u": "mimimishka2507", "s": 0, "r": 314}, {"u": "omad_urazov", "s": 0, "r": 353}], "pts": 254, "disabled": false}, {"id": "kqszcf5M", "n": "Lichess Liga 3B Team Battle", "d": "2026-06-21T18:01:00Z", "p": [{"u": "Obsidian_destroyer", "s": 33, "r": 7}, {"u": "sidbnskan_4d567", "s": 25, "r": 16}, {"u": "Mr_SergeyAntonov", "s": 24, "r": 21}, {"u": "Melastry", "s": 22, "r": 27}, {"u": "Nur-75", "s": 16, "r": 59}, {"u": "grand58", "s": 16, "r": 61}, {"u": "Pskov-Rulit", "s": 14, "r": 65}, {"u": "AlfaSkill", "s": 13, "r": 70}, {"u": "marut1", "s": 10, "r": 82}, {"u": "ROMSO1981", "s": 10, "r": 86}, {"u": "AMOH-PA", "s": 8, "r": 88}, {"u": "Rumoleg", "s": 7, "r": 92}, {"u": "masha_chess_rocket", "s": 5, "r": 105}, {"u": "afonya-ag", "s": 4, "r": 112}, {"u": "Andrey092005", "s": 0, "r": 134}, {"u": "ARTURIO999", "s": 0, "r": 142}, {"u": "mimimishka2507", "s": 0, "r": 147}, {"u": "marsel1515", "s": 0, "r": 150}, {"u": "CarlsenForcek", "s": 0, "r": 152}, {"u": "Karabas-Barabass", "s": 0, "r": 166}], "pts": 207, "disabled": false}, {"id": "AlRsRZP3", "n": "Lichess Liga 3C Team Battle", "d": "2026-06-18T18:01:00Z", "p": [{"u": "Melastry", "s": 39, "r": 14}, {"u": "Alanas", "s": 38, "r": 15}, {"u": "kolbox68", "s": 37, "r": 17}, {"u": "sewatop4ik2", "s": 33, "r": 26}, {"u": "sidbnskan_4d567", "s": 29, "r": 32}, {"u": "Mr_SergeyAntonov", "s": 26, "r": 50}, {"u": "Legenda_75", "s": 21, "r": 71}, {"u": "AlfaSkill", "s": 20, "r": 80}, {"u": "AMOH-PA", "s": 19, "r": 81}, {"u": "Vitylob", "s": 19, "r": 84}, {"u": "dark_angel_rinat", "s": 18, "r": 88}, {"u": "AlexNed", "s": 16, "r": 98}, {"u": "Victorvondoom312", "s": 13, "r": 102}, {"u": "Daniil2013m", "s": 9, "r": 126}, {"u": "CarlsenForcek", "s": 8, "r": 133}, {"u": "masha_chess_rocket", "s": 7, "r": 135}, {"u": "Michailovish72", "s": 3, "r": 157}, {"u": "ronaldo4147", "s": 2, "r": 165}, {"u": "ARTURIO999", "s": 0, "r": 174}, {"u": "Pskov-Rulit", "s": 0, "r": 184}, {"u": "Knightmare76", "s": 0, "r": 194}], "pts": 357, "disabled": false}, {"id": "9dMqVKNv", "n": "Призовой от НуРаСа Arena", "d": "2026-06-17T20:40:00Z", "p": [{"u": "Alanas", "s": 38, "r": 1}, {"u": "nyr-75", "s": 12, "r": 2}, {"u": "Mr_SergeyAntonov", "s": 10, "r": 3}, {"u": "Dinamovec331", "s": 8, "r": 4}, {"u": "dark_angel_rinat", "s": 4, "r": 5}, {"u": "Danielgilan", "s": 2, "r": 6}, {"u": "Groza_strimerov", "s": 2, "r": 7}, {"u": "AMOH-PA", "s": 0, "r": 8}, {"u": "sidbnskan_4d567", "s": 0, "r": 9}], "pts": 76, "disabled": false}, {"id": "lZJwewyu", "n": "195th Lichess Rapid League 1 Team Battle", "d": "2026-06-15T16:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 36, "r": 7}, {"u": "kolbox68", "s": 36, "r": 9}, {"u": "Alanas", "s": 32, "r": 12}, {"u": "Artek228", "s": 28, "r": 18}, {"u": "Mr_SergeyAntonov", "s": 24, "r": 27}, {"u": "Vitylob", "s": 24, "r": 29}, {"u": "AMOH-PA", "s": 20, "r": 37}, {"u": "AlfaSkill", "s": 20, "r": 39}, {"u": "CYBOPOBVVVMCM", "s": 12, "r": 75}, {"u": "OlegGrozniy", "s": 8, "r": 106}, {"u": "Karabas-Barabass", "s": 6, "r": 123}, {"u": "Melastry", "s": 4, "r": 147}, {"u": "Gustov_Vlad", "s": 4, "r": 157}, {"u": "ROMSO1981", "s": 4, "r": 161}, {"u": "ARTURIO999", "s": 0, "r": 241}, {"u": "on_oral_on", "s": 0, "r": 266}, {"u": "Knightmare76", "s": 0, "r": 290}, {"u": "furkan_isik4b", "s": 0, "r": 313}], "pts": 258, "disabled": false}, {"id": "SmRc33Eo", "n": "Lichess Bundesliga2 Team Battle", "d": "2026-06-14T18:01:00Z", "p": [{"u": "Alanas", "s": 28, "r": 38}, {"u": "AlfaSkill", "s": 25, "r": 63}, {"u": "AMOH-PA", "s": 23, "r": 76}, {"u": "Daniil2013m", "s": 22, "r": 80}, {"u": "Nur-75", "s": 18, "r": 111}, {"u": "kolbox68", "s": 17, "r": 118}, {"u": "ARTURIO999", "s": 12, "r": 154}, {"u": "ROMSO1981", "s": 11, "r": 158}, {"u": "mimimishka2507", "s": 8, "r": 181}, {"u": "Melastry", "s": 4, "r": 225}, {"u": "Andrey092005", "s": 2, "r": 251}, {"u": "Pskov-Rulit", "s": 0, "r": 286}, {"u": "CarlsenForcek", "s": 0, "r": 290}], "pts": 170, "disabled": false}, {"id": "gTmNRfRm", "n": "Lichess Liga 3C Team Battle", "d": "2026-06-11T18:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 36, "r": 4}, {"u": "Alanas", "s": 32, "r": 6}, {"u": "kolbox68", "s": 30, "r": 8}, {"u": "sewatop4ik2", "s": 25, "r": 16}, {"u": "AMOH-PA", "s": 25, "r": 17}, {"u": "AlfaSkill", "s": 20, "r": 35}, {"u": "grand58", "s": 18, "r": 40}, {"u": "masha_chess_rocket", "s": 18, "r": 44}, {"u": "Legenda_75", "s": 16, "r": 52}, {"u": "ROMSO1981", "s": 12, "r": 69}, {"u": "Melastry", "s": 11, "r": 72}, {"u": "mimimishka2507", "s": 6, "r": 101}, {"u": "ARTURIO999", "s": 2, "r": 126}, {"u": "Roma_Alex", "s": 0, "r": 134}, {"u": "CarlsenForcek", "s": 0, "r": 137}], "pts": 251, "disabled": false}, {"id": "tAHVtW9V", "n": "ПРИЗОВОЙ ТУРНИР от НуРаСы Arena", "d": "2026-06-09T21:30:00Z", "p": [{"u": "Alanas", "s": 33, "r": 1}, {"u": "Arsenalsky0000", "s": 17, "r": 2}, {"u": "Lubumchuk_Boga", "s": 14, "r": 3}, {"u": "Legenda_75", "s": 10, "r": 4}, {"u": "kolbox68", "s": 10, "r": 5}, {"u": "Mr_SergeyAntonov", "s": 10, "r": 6}, {"u": "sidbnskan_4d567", "s": 4, "r": 7}, {"u": "Budanov_Aleksandr", "s": 2, "r": 8}, {"u": "ROMSO1981", "s": 2, "r": 9}], "pts": 102, "disabled": false}, {"id": "uyVru7pt", "n": "194th Lichess Rapid League 1 Team Battle", "d": "2026-06-08T16:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 67, "r": 1}, {"u": "Alanas", "s": 26, "r": 24}, {"u": "sewatop4ik2", "s": 21, "r": 44}, {"u": "ARTURIO999", "s": 20, "r": 48}, {"u": "ROMSO1981", "s": 18, "r": 61}, {"u": "kolbox68", "s": 17, "r": 69}, {"u": "Mr_SergeyAntonov", "s": 17, "r": 70}, {"u": "mimimishka2507", "s": 15, "r": 88}, {"u": "Kot_Bayunn", "s": 15, "r": 92}, {"u": "Melastry", "s": 12, "r": 113}, {"u": "AMOH-PA", "s": 9, "r": 148}, {"u": "Vitylob", "s": 8, "r": 159}, {"u": "Koshamber1", "s": 8, "r": 168}, {"u": "dikiy_al", "s": 5, "r": 208}, {"u": "AlexNed", "s": 4, "r": 221}, {"u": "Knightmare76", "s": 0, "r": 428}], "pts": 262, "disabled": false}, {"id": "TjcZCEC9", "n": "Lichess Liga 3A Team Battle", "d": "2026-06-07T18:01:00Z", "p": [{"u": "sewatop4ik2", "s": 62, "r": 2}, {"u": "OstavaisaSoboi", "s": 48, "r": 5}, {"u": "Alanas", "s": 44, "r": 8}, {"u": "Melastry", "s": 30, "r": 24}, {"u": "Nur-75", "s": 23, "r": 50}, {"u": "kolbox68", "s": 19, "r": 72}, {"u": "AMOH-PA", "s": 14, "r": 91}, {"u": "ROMSO1981", "s": 11, "r": 107}, {"u": "Michailovish72", "s": 4, "r": 135}, {"u": "Pskov-Rulit", "s": 4, "r": 140}, {"u": "AlexNed", "s": 4, "r": 141}, {"u": "Kuwazu", "s": 2, "r": 148}, {"u": "Roma_Alex", "s": 0, "r": 153}, {"u": "ARTURIO999", "s": 0, "r": 155}, {"u": "CarlsenForcek", "s": 0, "r": 160}], "pts": 265, "disabled": false}, {"id": "bNPjrUs2", "n": "Lichess Liga 3A Team Battle", "d": "2026-06-04T18:01:00Z", "p": [{"u": "Alanas", "s": 52, "r": 2}, {"u": "Andrey092005", "s": 35, "r": 6}, {"u": "Mr_SergeyAntonov", "s": 22, "r": 18}, {"u": "nyr-75", "s": 19, "r": 29}, {"u": "AMOH-PA", "s": 15, "r": 46}, {"u": "kolbox68", "s": 14, "r": 59}, {"u": "AlfaSkill", "s": 13, "r": 65}, {"u": "ROMSO1981", "s": 12, "r": 68}, {"u": "john181982", "s": 11, "r": 70}, {"u": "AlexNed", "s": 2, "r": 115}, {"u": "Karabas-Barabass", "s": 2, "r": 116}, {"u": "ARTURIO999", "s": 0, "r": 120}, {"u": "CarlsenForcek", "s": 0, "r": 125}], "pts": 197, "disabled": false}, {"id": "QaZ4YIFt", "n": "РАПИД-1-ЛУЧШИЕ Arena", "d": "2026-06-01T19:00:00Z", "p": [{"u": "Alanas", "s": 61, "r": 1}, {"u": "OstavaisaSoboi", "s": 33, "r": 2}, {"u": "mimimishka2507", "s": 26, "r": 3}, {"u": "ASGGB", "s": 25, "r": 4}, {"u": "Groza_strimerov", "s": 22, "r": 5}, {"u": "Lubumchuk_Boga", "s": 18, "r": 6}, {"u": "kolbox68", "s": 14, "r": 7}, {"u": "Mr_SergeyAntonov", "s": 13, "r": 8}, {"u": "Legenda_75", "s": 9, "r": 9}, {"u": "ROMSO1981", "s": 8, "r": 10}, {"u": "CarlsenForcek", "s": 8, "r": 11}, {"u": "ARTURIO999", "s": 8, "r": 12}, {"u": "Michailovish72", "s": 3, "r": 13}, {"u": "Dimas040681", "s": 2, "r": 14}, {"u": "AMOH-PA", "s": 1, "r": 15}, {"u": "nyr-75", "s": 0, "r": 16}, {"u": "Griezzman_Frenc", "s": 0, "r": 17}, {"u": "DokTor_ii", "s": 0, "r": 18}, {"u": "Knightmare76", "s": 0, "r": 19}, {"u": "dikiy_al", "s": 0, "r": 20}], "pts": 251, "disabled": false}, {"id": "dKtRCBuq", "n": "193rd Lichess Rapid League 1 Team Battle", "d": "2026-06-01T16:01:00Z", "p": [{"u": "Alanas", "s": 49, "r": 1}, {"u": "OstavaisaSoboi", "s": 44, "r": 3}, {"u": "mimimishka2507", "s": 42, "r": 4}, {"u": "ROMSO1981", "s": 28, "r": 16}, {"u": "sewatop4ik2", "s": 26, "r": 23}, {"u": "Mr_SergeyAntonov", "s": 24, "r": 31}, {"u": "AMOH-PA", "s": 21, "r": 44}, {"u": "ARTURIO999", "s": 18, "r": 57}, {"u": "Kot_Bayunn", "s": 17, "r": 58}, {"u": "kolbox68", "s": 17, "r": 61}, {"u": "uxurty", "s": 10, "r": 118}, {"u": "TN2013", "s": 3, "r": 234}, {"u": "dikiy_al", "s": 3, "r": 242}, {"u": "Pskov-Rulit", "s": 0, "r": 304}], "pts": 302, "disabled": false}, {"id": "bXQaitP0", "n": "Lichess Liga 3B Team Battle", "d": "2026-05-31T18:01:00Z", "p": [{"u": "Alanas", "s": 24, "r": 15}, {"u": "Melastry", "s": 19, "r": 32}, {"u": "sewatop4ik2", "s": 19, "r": 33}, {"u": "kolbox68", "s": 19, "r": 38}, {"u": "Legenda_75", "s": 17, "r": 48}, {"u": "Mr_SergeyAntonov", "s": 16, "r": 56}, {"u": "Ilnarik", "s": 12, "r": 78}, {"u": "AMOH-PA", "s": 11, "r": 90}, {"u": "ROMSO1981", "s": 10, "r": 97}, {"u": "AlfaSkill", "s": 10, "r": 99}, {"u": "grand58", "s": 8, "r": 105}, {"u": "masha_chess_rocket", "s": 5, "r": 121}, {"u": "ARTURIO999", "s": 0, "r": 148}, {"u": "john181982", "s": 0, "r": 155}], "pts": 170, "disabled": false}, {"id": "3CfGgsen", "n": "в честь 100 подписчиков Arena", "d": "2026-05-29T19:22:00Z", "p": [{"u": "Andrey092005", "s": 65, "r": 1}, {"u": "mimimishka2507", "s": 56, "r": 2}, {"u": "Alanas", "s": 48, "r": 3}, {"u": "OstavaisaSoboi", "s": 31, "r": 4}, {"u": "Arsenalsky0000", "s": 29, "r": 5}, {"u": "Groza_strimerov", "s": 27, "r": 6}, {"u": "Mr_SergeyAntonov", "s": 27, "r": 7}, {"u": "Pskov-Rulit", "s": 26, "r": 8}, {"u": "Lubumchuk_Boga", "s": 24, "r": 9}, {"u": "kolbox68", "s": 22, "r": 10}, {"u": "nyr-75", "s": 19, "r": 11}, {"u": "Griezzman_Frenc", "s": 17, "r": 12}, {"u": "john181982", "s": 13, "r": 13}, {"u": "AMOH-PA", "s": 9, "r": 14}, {"u": "Budanov_Aleksandr", "s": 7, "r": 15}, {"u": "sidbnskan_4d567", "s": 7, "r": 16}, {"u": "afonya-ag", "s": 5, "r": 17}, {"u": "NokiA33109", "s": 3, "r": 18}, {"u": "ARTURIO999", "s": 3, "r": 19}, {"u": "AlexNed", "s": 2, "r": 20}, {"u": "Sparta75", "s": 0, "r": 21}, {"u": "sewatop4ik2", "s": 0, "r": 22}, {"u": "Melastry", "s": 0, "r": 23}, {"u": "ivann07k", "s": 0, "r": 24}, {"u": "AlfaSkill", "s": 0, "r": 25}], "pts": 440, "disabled": false}, {"id": "TCPCkoWv", "n": "Lichess Liga 3C Team Battle", "d": "2026-05-28T18:01:00Z", "p": [{"u": "mimimishka2507", "s": 43, "r": 8}, {"u": "Melastry", "s": 31, "r": 24}, {"u": "kolbox68", "s": 31, "r": 27}, {"u": "Andrey092005", "s": 27, "r": 39}, {"u": "Legenda_75", "s": 27, "r": 40}, {"u": "AMOH-PA", "s": 20, "r": 73}, {"u": "AlexNed", "s": 15, "r": 93}, {"u": "Pskov-Rulit", "s": 11, "r": 107}, {"u": "Mr_SergeyAntonov", "s": 8, "r": 121}, {"u": "ROMSO1981", "s": 8, "r": 126}, {"u": "AlfaSkill", "s": 4, "r": 141}, {"u": "ARTURIO999", "s": 0, "r": 159}, {"u": "Capablanka543", "s": 0, "r": 165}, {"u": "grand58", "s": 0, "r": 174}, {"u": "masha_chess_rocket", "s": 0, "r": 176}], "pts": 225, "disabled": false}, {"id": "DimsMHsA", "n": "192nd Lichess Rapid League 1 Team Battle", "d": "2026-05-25T16:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 37, "r": 8}, {"u": "sewatop4ik2", "s": 29, "r": 20}, {"u": "kolbox68", "s": 28, "r": 24}, {"u": "Alanas", "s": 26, "r": 30}, {"u": "ROMSO1981", "s": 23, "r": 38}, {"u": "Fortu72", "s": 22, "r": 46}, {"u": "AlfaSkill", "s": 22, "r": 48}, {"u": "Mr_SergeyAntonov", "s": 19, "r": 62}, {"u": "ARTURIO999", "s": 10, "r": 133}, {"u": "Rumoleg", "s": 9, "r": 136}, {"u": "sidbnskan_4d567", "s": 9, "r": 146}, {"u": "Capablanka543", "s": 8, "r": 155}, {"u": "DokTor_ii", "s": 4, "r": 218}, {"u": "mimimishka2507", "s": 0, "r": 313}, {"u": "ArhVerik", "s": 0, "r": 353}, {"u": "Melastry", "s": 0, "r": 370}, {"u": "SIMENCOM1", "s": 0, "r": 380}], "pts": 246, "disabled": false}, {"id": "Ypg9VaLB", "n": "Lichess Liga 4B Team Battle", "d": "2026-05-24T18:01:00Z", "p": [{"u": "OstavaisaSoboi", "s": 41, "r": 2}, {"u": "sewatop4ik2", "s": 31, "r": 10}, {"u": "Nur-75", "s": 28, "r": 15}, {"u": "Mr_SergeyAntonov", "s": 26, "r": 17}, {"u": "kolbox68", "s": 19, "r": 37}, {"u": "AlfaSkill", "s": 15, "r": 50}, {"u": "john181982", "s": 11, "r": 64}, {"u": "ROMSO1981", "s": 10, "r": 68}, {"u": "Melastry", "s": 9, "r": 72}, {"u": "Boardway", "s": 9, "r": 74}, {"u": "Alihan0516", "s": 6, "r": 82}, {"u": "masha_chess_rocket", "s": 6, "r": 84}, {"u": "DokTor_ii", "s": 6, "r": 85}, {"u": "AlexNed", "s": 5, "r": 87}, {"u": "ARTURIO999", "s": 4, "r": 97}, {"u": "mimimishka2507", "s": 3, "r": 103}, {"u": "AMOH-PA", "s": 3, "r": 107}, {"u": "Ilnarik", "s": 0, "r": 120}], "pts": 232, "disabled": false}, {"id": "r5Z5LoM0", "n": "Lichess Liga 5B Team Battle", "d": "2026-05-21T18:01:00Z", "p": [{"u": "kolbox68", "s": 28, "r": 7}, {"u": "Andrey092005", "s": 25, "r": 10}, {"u": "Mr_SergeyAntonov", "s": 24, "r": 12}, {"u": "Melastry", "s": 22, "r": 17}, {"u": "Legenda_75", "s": 21, "r": 20}, {"u": "AlfaSkill", "s": 21, "r": 25}, {"u": "grand58", "s": 18, "r": 35}, {"u": "ROMSO1981", "s": 14, "r": 51}, {"u": "AlexNed", "s": 10, "r": 69}, {"u": "ARTURIO999", "s": 8, "r": 76}, {"u": "Fraza_YO", "s": 8, "r": 82}, {"u": "sidbnskan_4d567", "s": 4, "r": 106}, {"u": "afonya-ag", "s": 2, "r": 118}], "pts": 205, "disabled": false}, {"id": "NMJ4waeT", "n": "191st Lichess Rapid League 2 Team Battle", "d": "2026-05-18T16:01:00Z", "p": [{"u": "sewatop4ik2", "s": 41, "r": 4}, {"u": "OstavaisaSoboi", "s": 39, "r": 7}, {"u": "mimimishka2507", "s": 37, "r": 8}, {"u": "AlfaSkill", "s": 28, "r": 22}, {"u": "Kot_Bayunn", "s": 27, "r": 27}, {"u": "kolbox68", "s": 26, "r": 32}, {"u": "Vitylob", "s": 26, "r": 33}, {"u": "ROMSO1981", "s": 23, "r": 44}, {"u": "DokTor_ii", "s": 16, "r": 73}, {"u": "Melastry", "s": 13, "r": 83}, {"u": "AlexNed", "s": 12, "r": 85}, {"u": "Mr_SergeyAntonov", "s": 11, "r": 88}, {"u": "ARTURIO999", "s": 9, "r": 91}], "pts": 308, "disabled": false}, {"id": "BTCIkJvg", "n": "Lichess Liga 6B Team Battle", "d": "2026-05-17T18:01:00Z", "p": [{"u": "Andrey092005", "s": 51, "r": 4}, {"u": "Mr_SergeyAntonov", "s": 41, "r": 8}, {"u": "Legenda_75", "s": 35, "r": 11}, {"u": "sidbnskan_4d567", "s": 28, "r": 23}, {"u": "kolbox68", "s": 25, "r": 30}, {"u": "Pskov-Rulit", "s": 23, "r": 35}, {"u": "Melastry", "s": 22, "r": 37}, {"u": "ARTURIO999", "s": 20, "r": 42}, {"u": "AlfaSkill", "s": 17, "r": 47}, {"u": "ROMSO1981", "s": 15, "r": 51}, {"u": "Ilnarik", "s": 14, "r": 55}, {"u": "DokTor_ii", "s": 14, "r": 57}, {"u": "Vitylob", "s": 4, "r": 77}, {"u": "grand58", "s": 2, "r": 85}], "pts": 311, "disabled": false}, {"id": "gAAnVJKh", "n": "Lichess Liga 7B Team Battle", "d": "2026-05-14T18:01:00Z", "p": [{"u": "sewatop4ik2", "s": 35, "r": 2}, {"u": "kolbox68", "s": 18, "r": 17}, {"u": "ROMSO1981", "s": 14, "r": 23}, {"u": "john181982", "s": 13, "r": 25}, {"u": "nyr-75", "s": 13, "r": 27}, {"u": "IlayKachsheev", "s": 12, "r": 29}, {"u": "ARTURIO999", "s": 10, "r": 34}, {"u": "AlexNed", "s": 3, "r": 55}, {"u": "Ilnarik", "s": 3, "r": 56}, {"u": "Karabas-Barabass", "s": 2, "r": 61}, {"u": "Mr_SergeyAntonov", "s": 0, "r": 68}, {"u": "Peter_Klein", "s": 0, "r": 71}], "pts": 123, "disabled": false}, {"id": "PwW1rGFN", "n": "ПРИЗОВОЙ ТУРНИР ИМЕНИННИКА Arena", "d": "2026-05-13T20:15:00Z", "p": [{"u": "OstavaisaSoboi", "s": 27, "r": 1}, {"u": "Klimenko_Sergey_IM", "s": 26, "r": 2}, {"u": "kolbox68", "s": 20, "r": 3}, {"u": "Mr_SergeyAntonov", "s": 19, "r": 4}, {"u": "Pskov-Rulit", "s": 12, "r": 5}, {"u": "afonya-ag", "s": 8, "r": 6}, {"u": "DarkoCG", "s": 8, "r": 7}, {"u": "Nur-75", "s": 6, "r": 8}, {"u": "ROMSO1981", "s": 6, "r": 9}, {"u": "Daniil2013m", "s": 5, "r": 10}, {"u": "Lubumchuk_Boga", "s": 4, "r": 11}, {"u": "RockN8N", "s": 3, "r": 12}, {"u": "AlexNed", "s": 2, "r": 13}, {"u": "Budanov_Aleksandr", "s": 1, "r": 14}, {"u": "sidbnskan_4d567", "s": 0, "r": 15}], "pts": 147, "disabled": false}, {"id": "3H5GcQbi", "n": "ДР Arena", "d": "2026-05-13T18:00:00Z", "p": [{"u": "Melastry", "s": 15, "r": 1}, {"u": "Mr_SergeyAntonov", "s": 13, "r": 2}, {"u": "ARTURIO999", "s": 12, "r": 3}, {"u": "OstavaisaSoboi", "s": 10, "r": 4}, {"u": "Lubumchuk_Boga", "s": 8, "r": 5}, {"u": "kolbox68", "s": 5, "r": 6}, {"u": "Ilnarik", "s": 3, "r": 7}, {"u": "mimimishka2507", "s": 2, "r": 8}, {"u": "RockN8N", "s": 2, "r": 9}, {"u": "Karabas-Barabass", "s": 2, "r": 10}, {"u": "afonya-ag", "s": 1, "r": 11}, {"u": "Andrey092005", "s": 0, "r": 12}, {"u": "Nur-75", "s": 0, "r": 13}, {"u": "Marti_McFly_1", "s": 0, "r": 14}, {"u": "Daniil2013m", "s": 0, "r": 15}, {"u": "DarkoCG", "s": 0, "r": 16}, {"u": "ROMSO1981", "s": 0, "r": 17}, {"u": "m0ns1t", "s": 0, "r": 18}], "pts": 73, "disabled": false}, {"id": "RS2M3u6w", "n": "С ДНЮХОЙ Arena", "d": "2026-05-11T21:17:07.168Z", "p": [{"u": "Mr_SergeyAntonov", "s": 9, "r": 1}, {"u": "ARTURIO999", "s": 8, "r": 2}, {"u": "sidbnskan_4d567", "s": 3, "r": 3}, {"u": "Lubumchuk_Boga", "s": 2, "r": 4}, {"u": "nyr-75", "s": 2, "r": 5}], "pts": 24, "disabled": false}];
 let players = {}; 
 let sniperPlayer = '';
 
@@ -230,6 +370,7 @@ window.onload = () => {
     refresh();
 };
 
+// Генерация точных 3 категорий фильтра
 function updateTypeSelector() {
     const container = document.getElementById('filterType');
     let selected = [];
@@ -239,26 +380,21 @@ function updateTypeSelector() {
         if (!Array.isArray(selected)) selected = [];
     } catch(e) { selected = []; }
     
-    const types = new Set();
-    data.forEach(t => {
-        if (!t || !t.n) return;
-        if (t.n.includes('Lichess Liga')) types.add('Lichess Liga');
-        else if (t.n.includes('Lichess Mega')) types.add('Lichess Mega');
-        else if (t.n.includes('Rapid League')) types.add('Rapid League');
-        else if (t.n.includes('Дружественный межклубный')) types.add('Дружественный межклубный'); 
-        else types.add(t.n.split(' #')[0].split(' 第')[0]);
-    });
+    const categories = [
+        { id: 'Lichess Liga', label: '🏆 Lichess Liga' },
+        { id: 'Rapid League', label: '⏱️ Rapid League' },
+        { id: 'Внутриклубные', label: '🏠 Внутриклубные' }
+    ];
     
     let html = '';
-    Array.from(types).sort().forEach(type => {
-        const isChecked = selected.includes(type) ? 'checked' : '';
-        const safeType = type.replace(/"/g, '&quot;');
-        html += `<label class="cb-container" style="background: var(--color-bg-base); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--color-border); white-space: nowrap;">
-            <input type="checkbox" value="${safeType}" ${isChecked} onchange="handleFilterChange()">
-            <div style="font-size: 13px;">${type}</div>
+    categories.forEach(cat => {
+        const isChecked = selected.includes(cat.id) ? 'checked' : '';
+        html += `<label class="chip-cb">
+            <input type="checkbox" value="${cat.id}" ${isChecked} onchange="handleFilterChange()">
+            <span>${cat.label}</span>
         </label>`;
     });
-    container.innerHTML = html || '<span style="color:var(--color-text-muted); font-size:13px; margin-top:8px;">Нет турниров для фильтрации</span>';
+    container.innerHTML = html;
 }
 
 function handleFilterChange() {
@@ -297,14 +433,13 @@ function selectPlayerFromTable(username) {
     showPlayerStats();
 }
 
-// Функция для генерации значков достижений с подсказками
 function getBadges(username) {
     if (!players[username]) return '';
     const p = players[username];
     let badges = '';
-    if (p.c >= 10) badges += '<span class="badge" title="Ветеран (Сыграл 10+ турниров)">🛡️</span>';
-    if (p.max_s >= 30) badges += '<span class="badge" title="Гладиатор (Набрал 30+ очков в одном турнире)">⚔️</span>';
-    if (username === sniperPlayer) badges += '<span class="badge" title="Снайпер (Лучшая средняя эффективность среди тех, у кого 3+ турнира)">🎯</span>';
+    if (p.c >= 10) badges += '<span class="badge" title="Ветеран (10+ турниров)">🛡️</span>';
+    if (p.max_s >= 30) badges += '<span class="badge" title="Гладиатор (30+ очков в турнире)">⚔️</span>';
+    if (username === sniperPlayer) badges += '<span class="badge" title="Снайпер (Лучшая эффективность)">🎯</span>';
     return badges;
 }
 
@@ -325,12 +460,18 @@ function refresh() {
     let activeCount = 0;
     let totalScore = 0;
 
-    // Сбор данных
-    data.forEach((t, idx) => {
+    data.forEach((t) => {
         if (!t || !t.n || t.disabled) return;
         
+        // Категоризация турниров
         if (typeFilters.length > 0) {
-            const matchesType = typeFilters.some(type => t.n.includes(type));
+            const matchesType = typeFilters.some(filterCat => {
+                const name = t.n.toLowerCase();
+                if (filterCat === 'Lichess Liga') return name.includes('lichess liga') || name.includes('bundesliga');
+                if (filterCat === 'Rapid League') return name.includes('rapid league');
+                if (filterCat === 'Внутриклубные') return !name.includes('lichess liga') && !name.includes('bundesliga') && !name.includes('rapid league');
+                return false;
+            });
             if (!matchesType) return;
         }
         
@@ -349,7 +490,6 @@ function refresh() {
             players[p.u].s += p.s;
             players[p.u].c += 1;
             
-            // Максимальный балл за турнир (для Гладиатора)
             if (p.s > players[p.u].max_s) players[p.u].max_s = p.s;
 
             const clubRank = index + 1;
@@ -361,7 +501,6 @@ function refresh() {
         });
     });
 
-    // Высчитываем средний балл и определяем "Снайпера"
     let maxAvg = 0;
     for (const u in players) {
         players[u].avg = players[u].c > 0 ? (players[u].s / players[u].c) : 0;
@@ -373,53 +512,60 @@ function refresh() {
         }
     }
 
-    // Сортировка по выбору (Очки или Эффективность)
     const sorted = Object.entries(players).sort((a, b) => {
         if (sortType === 'avg') return b[1].avg - a[1].avg;
         return b[1].s - a[1].s;
     });
 
-    // Обновляем статистику
     document.getElementById('stat-pts').textContent = totalScore;
     document.getElementById('stat-t').textContent = activeCount;
     document.getElementById('stat-p').textContent = Object.keys(players).length;
     
-    document.getElementById('list-t').innerHTML = data.map((t, i) => {
+    // Функция построения HTML для Пьедестала (используется и в Обзоре, и в Рейтинге)
+    function buildPodiumHtml(top3List) {
+        if (!top3List.length) return '<p style="padding:20px; color:var(--color-text-muted)">Нет данных</p>';
+        let html = '<div class="podium-container">';
+        top3List.forEach((p, i) => {
+            const place = i + 1;
+            const medal = place === 1 ? '👑' : place === 2 ? '🥈' : '🥉';
+            const displayScore = sortType === 'avg' ? p[1].avg.toFixed(1) : p[1].s;
+            const displayLabel = sortType === 'avg' ? 'в ср.' : 'очков';
+
+            html += `
+                <div class="podium-place place-${place}">
+                    <span class="podium-rank">${medal}</span>
+                    <a class="player-link podium-name" onclick="selectPlayerFromTable('${p[0]}')">${getBadges(p[0])} ${p[0]}</a>
+                    <div class="${sortType === 'avg' ? 'avg-points' : 'points'}" style="font-size: 1.3em;">${displayScore} <span style="font-size: 0.55em; color: var(--color-text-muted);">${displayLabel}</span></div>
+                    <small style="color:var(--color-text-muted); font-size: 12px;">${p[1].c} турн.</small>
+                </div>`;
+        });
+        html += '</div>';
+        return html;
+    }
+
+    // Выводим Топ-3 на вкладку «Обзор»
+    const top3Overall = sorted.slice(0, 3);
+    document.getElementById('main-top3-container').innerHTML = buildPodiumHtml(top3Overall);
+
+    // Список турниров
+    document.getElementById('list-t').innerHTML = data.map((t) => {
         if (!t || !t.n) return '';
         const displayDate = t.d ? new Date(t.d).toLocaleDateString() : '—';
         return `<div class="tournament-item">
-            <div><strong>${t.n}</strong><br><small>${displayDate} • Игроков клуба: ${(t.p || []).length}</small></div>
-            <div><span class="points">${t.pts}</span></div>
-        </div>`}).join('') || '<p style="padding:20px; color:var(--color-text-muted)">Турниры загружаются...</p>';
+            <div>
+                <a href="https://lichess.org/tournament/${t.id}" target="_blank" class="tourney-link">${t.n}</a><br>
+                <small style="color:var(--color-text-muted); font-size:12px;">${displayDate} • Участников клуба: ${(t.p || []).length}</small>
+            </div>
+            <div><span class="points" style="font-size:16px;">${t.pts}</span></div>
+        </div>`}).join('') || '<p style="padding:20px; color:var(--color-text-muted)">Турниры не найдены</p>';
     
-    // Пьедестал
-    let podiumHtml = '<div class="podium-container">';
-    const top3 = sorted.slice(0, 3);
-    
-    top3.forEach((p, i) => {
-        const place = i + 1;
-        const medal = place === 1 ? '🥇' : place === 2 ? '🥈' : '🥉';
-        
-        // Меняем отображение очков на пьедестале в зависимости от сортировки
-        const displayScore = sortType === 'avg' ? p[1].avg.toFixed(1) : p[1].s;
-        const displayLabel = sortType === 'avg' ? 'в ср.' : 'очков';
-
-        podiumHtml += `
-            <div class="podium-place place-${place}">
-                <span class="podium-rank">${medal}</span>
-                <a class="player-link podium-name" onclick="selectPlayerFromTable('${p[0]}')">${getBadges(p[0])} ${p[0]}</a>
-                <div class="${sortType === 'avg' ? 'avg-points' : 'points'}" style="font-size: 1.2em;">${displayScore} <span style="font-size: 0.6em; color: var(--color-text-muted);">${displayLabel}</span></div>
-                <small style="color:var(--color-text-muted)">${p[1].c} турн.</small>
-            </div>`;
-    });
-    podiumHtml += '</div>';
-
-    // Таблица
+    // Вкладка «Рейтинг» (Пьедестал + Таблица оставшихся)
+    const podiumHtml = buildPodiumHtml(top3Overall);
     const rest = sorted.slice(3);
     let tableHtml = `<table><tr><th>#</th><th>Игрок</th><th>Турниры</th><th>Очки</th><th>В ср.</th></tr>`;
     tableHtml += rest.map((p, i) => `
         <tr>
-            <td>${i + 4}</td>
+            <td style="color: var(--color-text-muted); font-weight: 600;">${i + 4}</td>
             <td><a class="player-link" onclick="selectPlayerFromTable('${p[0]}')">${getBadges(p[0])} ${p[0]}</a></td>
             <td>${p[1].c}</td>
             <td class="points">${p[1].s}</td>
@@ -427,7 +573,7 @@ function refresh() {
         </tr>`).join('');
     tableHtml += `</table>`;
 
-    document.getElementById('list-r').innerHTML = sorted.length ? (podiumHtml + tableHtml) : '';
+    document.getElementById('list-r').innerHTML = sorted.length ? (podiumHtml + tableHtml) : '<p style="padding:20px; color:var(--color-text-muted)">Нет данных за указанный период</p>';
 
     // Медальный зачет
     const sortedByMedals = Object.entries(players)
@@ -438,15 +584,15 @@ function refresh() {
         <tr><th>#</th><th>Игрок</th><th>🥇 1-е</th><th>🥈 2-е</th><th>🥉 3-е</th><th>Всего</th></tr>
         ${sortedByMedals.map((p, i) => `
             <tr>
-                <td>${i+1}</td>
+                <td style="color: var(--color-text-muted); font-weight: 600;">${i+1}</td>
                 <td><a class="player-link" onclick="selectPlayerFromTable('${p[0]}')">${getBadges(p[0])} ${p[0]}</a></td>
                 <td class="medal-gold">${p[1].m1}</td>
                 <td class="medal-silver">${p[1].m2}</td>
                 <td class="medal-bronze">${p[1].m3}</td>
-                <td>${p[1].m1 + p[1].m2 + p[1].m3}</td>
+                <td style="font-weight:700;">${p[1].m1 + p[1].m2 + p[1].m3}</td>
             </tr>`).join('')}</table>` || '<p style="padding:20px; color:var(--color-text-muted)">Медалистов пока нет</p>';
 
-    // Выпадающий список игроков
+    // Выпадающий список
     const sel = document.getElementById('sel-p');
     const cur = sel.value;
     sel.innerHTML = '<option value="">-- Выберите игрока --</option>' + Object.keys(players).sort().map(p => `<option value="${p}">${p}</option>`).join('');
@@ -458,12 +604,19 @@ function showPlayerStats() {
     const box = document.getElementById('player-res');
     if (!u) return box.innerHTML = '';
     const p = players[u];
-    box.innerHTML = `<div style="padding:15px; background:var(--color-bg-base); border-radius:8px; margin-top:10px;">
-        <h3>${getBadges(u)} ${u}</h3>
-        <p style="margin-top: 5px; margin-bottom: 5px;">Медали клуба: <span class="medal-gold">🥇 ${p.m1}</span> | <span class="medal-silver">🥈 ${p.m2}</span> | <span class="medal-bronze">🥉 ${p.m3}</span></p>
-        <p>В текущем фильтре: <b class="points">${p.s}</b> очков в ${p.c} турнирах (В среднем: <b class="avg-points">${p.avg.toFixed(1)}</b>)</p>
-        <table style="margin-top:15px;">
-            <tr><th>Дата</th><th>Турнир</th><th>Очки</th><th>Место (Клуб)</th><th>Место (Личесс)</th></tr>
+    box.innerHTML = `<div style="padding:18px; background:var(--color-bg-base); border-radius:12px; margin-top:10px; border:1px solid var(--color-border);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <h3 style="font-size:1.2rem;">${getBadges(u)} ${u}</h3>
+            <a href="https://lichess.org/@/${u}" target="_blank" class="tourney-link" style="font-size:13px;">Профиль Lichess ↗</a>
+        </div>
+        <p style="margin-top: 8px; font-size:14px; color: var(--color-text-secondary);">
+            Медали клуба: <span class="medal-gold">🥇 ${p.m1}</span> | <span class="medal-silver">🥈 ${p.m2}</span> | <span class="medal-bronze">🥉 ${p.m3}</span>
+        </p>
+        <p style="margin-top: 4px; font-size:14px; color: var(--color-text-secondary);">
+            В текущем фильтре: <b class="points">${p.s}</b> очков в ${p.c} турнирах (Средний балл: <b class="avg-points">${p.avg.toFixed(1)}</b>)
+        </p>
+        <table style="margin-top:16px;">
+            <tr><th>Дата</th><th>Турнир</th><th>Очки</th><th>Место (Клуб)</th><th>Место (Lichess)</th></tr>
             ${p.t.map(t => `<tr>
                 <td style="color:var(--color-text-muted); font-size:13px; white-space:nowrap;">${t.d}</td>
                 <td><a href="https://lichess.org/tournament/${t.id}" target="_blank" class="tourney-link">${t.n}</a></td>
