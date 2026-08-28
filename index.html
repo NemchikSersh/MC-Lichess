@@ -592,16 +592,19 @@ function getBadges(username) {
     const p = players[username];
     let badges = '';
     
-    if (p.c >= 35) badges += '<span class="badge" title="Легенда (35+ турниров)">🌟</span>';
-    else if (p.c >= 10) badges += '<span class="badge" title="Ветеран (10+ турниров)">🛡️</span>';
+    // Новые пороги: Легенда (50+), Ветеран (25+)
+    if (p.c >= 50) badges += '<span class="badge" title="Легенда (50+ турниров)">🌟</span>';
+    else if (p.c >= 25) badges += '<span class="badge" title="Ветеран (25+ турниров)">🛡️</span>';
     
+    // Авангард
     if (totalFilteredTournamentsList.length >= 5) {
         const last5Ids = totalFilteredTournamentsList.slice(0, 5);
         const playedLast5 = last5Ids.every(id => p.t.some(tourney => tourney.id === id));
         if (playedLast5) badges += '<span class="badge" title="Авангард (Сыграл в 5 последних турнирах подряд)">🎖️</span>';
     }
 
-    if (p.max_s >= 30) badges += '<span class="badge" title="Гладиатор (30+ очков в турнире)">⚔️</span>';
+    // Новый порог Гладиатора (35+ очков)
+    if (p.max_s >= 35) badges += '<span class="badge" title="Гладиатор (35+ очков в турнире)">⚔️</span>';
     if (username === sniperPlayer) badges += '<span class="badge" title="Снайпер (Лучшая эффективность)">🎯</span>';
     
     return badges;
