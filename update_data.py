@@ -9,7 +9,7 @@ TEAM_ID = '43TISSDh'
 HTML_FILE = 'index.html'
 
 def get_team_tournaments():
-    url = f"https://lichess.org/api/team/{TEAM_ID}/arena"
+    url = f"https://lichess.org/api/team/{TEAM_ID}/arena?max=200"
     response = requests.get(url)
     tournaments = [json.loads(line) for line in response.text.strip().split('\n') if line]
     
@@ -17,7 +17,7 @@ def get_team_tournaments():
     # или завершились (статус 30). Будущие (статус 10) — пропускаем.
     valid_tournaments = [t for t in tournaments if t.get('status', 0) >= 20]
     
-    return valid_tournaments[:50]
+    return valid_tournaments
 
 def fetch_full_data(t_id):
     time.sleep(1.5) 
