@@ -4,35 +4,41 @@ import os
 import re
 import time
 import datetime
+import sys
 
 # --- НАСТРОЙКИ КОМАНД ---
-# Главная команда и команды-друзья
 TEAMS = ['43TISSDh', '0HNGIQ0f', '3pe91Ykb']
 HTML_FILE = 'index.html'
 
 def get_team_tournaments(team_id):
     url = f"https://lichess.org/api/team/{team_id}/arena?max=200"
-    response = requests.get(url)
-    if response.status_code != 200:
-        print(f"Ошибка получения турниров для {team_id}: HTTP {response.status_code}")
+    try:
+        # Добавлен таймаут 15 секунд
+        response = requests.get(url, timeout=15)
+        if response.status_code != 200:
+            print(f"Ошибка получения турниров для {team_id}: HTTP {response.status_code}")
+            return []
+        
+        tournaments = [json.loads(line) for line in response.text.strip().split('\n') if line]
+        valid_tournaments = [t for t in tournaments if t.get('status', 0) >= 20]
+        return valid_tournaments
+    except Exception as e:
+        print(f"Сбой при запросе списка арен {team_id}: {e}")
         return []
-    
-    tournaments = [json.loads(line) for line in response.text.strip().split('\n') if line]
-    # Оставляем только те, которые начались или завершились
-    valid_tournaments = [t for t in tournaments if t.get('status', 0) >= 20]
-    return valid_tournaments
 
 def fetch_full_data(t_id, team_id):
     time.sleep(1.5) 
     
-    info_req = requests.get(f"https://lichess.org/api/tournament/{t_id}")
+    # Добавлен таймаут 15 секунд
+    info_req = requests.get(f"https://lichess.org/api/tournament/{t_id}", timeout=15)
     if info_req.status_code != 200:
         raise Exception(f"Ошибка получения инфо: HTTP {info_req.status_code}")
     info = info_req.json()
     
     is_team_battle = 'teamBattle' in info
     
-    results_req = requests.get(f"https://lichess.org/api/tournament/{t_id}/results")
+    # Добавлен таймаут 15 секунд
+    results_req = requests.get(f"https://lichess.org/api/tournament/{t_id}/results", timeout=15)
     if results_req.status_code != 200:
         raise Exception(f"Ошибка получения результатов: HTTP {results_req.status_code}")
     
@@ -75,19 +81,18 @@ def send_telegram_message():
     }
     
     try:
-        requests.post(url, json=payload)
+        requests.post(url, json=payload, timeout=10)
         print("Уведомление в Telegram успешно отправлено!")
     except Exception as e:
         print(f"Ошибка отправки в Telegram: {e}")
 
 
-print("Читаю существующие турниры из HTML...")
+print("Читаю существующие турниры из HTML...", flush=True)
 with open(HTML_FILE, 'r', encoding='utf-8') as f:
     html = f.read()
 
 existing_teams_data = {t: [] for t in TEAMS}
 
-# Ищем, в каком формате сейчас хранятся данные в index.html
 match_new = re.search(r'let teamsData = (\{.*?\});', html, flags=re.DOTALL)
 match_old = re.search(r'let data = (\[.*?\]);', html, flags=re.DOTALL)
 
@@ -97,57 +102,54 @@ if match_new:
         for t in TEAMS:
             existing_teams_data[t] = parsed.get(t, [])
     except Exception as e:
-        print("Ошибка парсинга нового формата данных:", e)
+        print("Ошибка парсинга нового формата данных:", e, flush=True)
 elif match_old:
     try:
         parsed = json.loads(match_old.group(1))
         existing_teams_data['43TISSDh'] = parsed
-        print("Найден старый формат данных, он будет конвертирован в мульти-командный.")
+        print("Найден старый формат данных, он будет конвертирован в мульти-командный.", flush=True)
     except Exception as e:
-        print("Ошибка парсинга старого формата данных:", e)
+        print("Ошибка парсинга старого формата данных:", e, flush=True)
 
-print("\n=== Начинаю сбор данных ===")
+print("\n=== Начинаю сбор данных ===", flush=True)
 for current_team in TEAMS:
-    print(f"\n--- Проверка команды {current_team} ---")
+    print(f"\n--- Проверка команды {current_team} ---", flush=True)
     existing_ids = {t['id'] for t in existing_teams_data[current_team] if 'id' in t}
     
     for t in get_team_tournaments(current_team):
         if t['id'] in existing_ids:
-            continue # Турнир уже есть, пропускаем (экономим время!)
+            continue
             
         try:
             data = fetch_full_data(t['id'], current_team)
             existing_teams_data[current_team].append(data)
-            print(f"Добавлен НОВЫЙ турнир {t['id']} для {current_team}. Очки: {data['pts']}")
+            print(f"Добавлен НОВЫЙ турнир {t['id']} для {current_team}. Очки: {data['pts']}", flush=True)
         except Exception as e:
-            print(f"Ошибка с турниром {t['id']}: {e}")
+            print(f"Ошибка с турниром {t['id']}: {e}", flush=True)
             continue
             
-    # Сортируем турниры от новых к старым
     existing_teams_data[current_team].sort(key=lambda x: x.get('d', ''), reverse=True)
 
-print("\nОбновляю HTML файл...")
+print("\nОбновляю HTML файл...", flush=True)
 new_json = json.dumps(existing_teams_data, ensure_ascii=False)
 
 if match_new:
     html = re.sub(r'let teamsData = \{.*?\};', f'let teamsData = {new_json};', html, flags=re.DOTALL)
 else:
-    # Переходный вариант: меняем старую переменную data на словарь teamsData, чтобы сайт не сломался
     replacement = f'let teamsData = {new_json};\nlet currentTeamId = "43TISSDh";\nlet data = teamsData[currentTeamId] || [];'
     html = re.sub(r'let data = \[.*?\];', replacement, html, flags=re.DOTALL)
 
 with open(HTML_FILE, 'w', encoding='utf-8') as f:
     f.write(html)
     
-print("Данные успешно сохранены.")
+print("Данные успешно сохранены.", flush=True)
 
-# Проверяем день недели (0 - Пн, 1 - Вт, 2 - Ср, 3 - Чт, 4 - Пт, 5 - Сб, 6 - Вс)
 today = datetime.datetime.utcnow().weekday()
 
 if today in [0, 3, 6]: 
-    print("Отправляю уведомление в Telegram...")
-    #  send_telegram_message()
+    print("Отправляю уведомление в Telegram...", flush=True)
+    # send_telegram_message()
 else:
-    print(f"Сегодня номер дня {today}. Телеграм отдыхает.")
+    print(f"Сегодня номер дня {today}. Телеграм отдыхает.", flush=True)
 
-print("Готово!")
+print("Готово!", flush=True)
