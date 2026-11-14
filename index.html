@@ -373,17 +373,18 @@ window.onload = () => {
 
 function switchTeam(teamId) {
     currentTeamId = teamId;
-    
+    data = teamsData[teamId] || [];
+    sortData();
+
     // Обновляем подсветку активной кнопки
     document.querySelectorAll('.team-btn').forEach(btn => btn.classList.remove('active-team'));
     const activeBtn = document.getElementById('btn-' + teamId);
     if (activeBtn) activeBtn.classList.add('active-team');
-    
+
     // Обновляем заголовок шапки
     const titleEl = document.getElementById('club-title') || document.querySelector('header h1');
-    if (titleEl && activeBtn) {
-        // Берём текст кнопки и убираем лишние пробелы/иконки
-        titleEl.textContent = activeBtn.textContent.trim();
+    if (titleEl && teamTitles[teamId]) {
+        titleEl.textContent = teamTitles[teamId];
     }
 
     // Показываем логотипы СМ только для главного клуба, а для друзей — бейдж
