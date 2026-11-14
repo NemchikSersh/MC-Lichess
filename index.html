@@ -381,8 +381,9 @@ function switchTeam(teamId) {
     
     // Обновляем заголовок шапки
     const titleEl = document.getElementById('club-title') || document.querySelector('header h1');
-    if (titleEl && TEAM_NAMES[teamId]) {
-        titleEl.textContent = TEAM_NAMES[teamId];
+    if (titleEl && activeBtn) {
+        // Берём текст кнопки и убираем лишние пробелы/иконки
+        titleEl.textContent = activeBtn.textContent.trim();
     }
 
     // Показываем логотипы СМ только для главного клуба, а для друзей — бейдж
