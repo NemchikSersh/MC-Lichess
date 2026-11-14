@@ -222,7 +222,6 @@
         <button id="btn-43TISSDh" class="team-btn active-team" onclick="switchTeam('43TISSDh')">🛡️ БУДУЩИЕ СМ</button>
         <button id="btn-0HNGIQ0f" class="team-btn" onclick="switchTeam('0HNGIQ0f')">🌊 НУРАСА</button>
         <button id="btn-3pe91Ykb" class="team-btn" onclick="switchTeam('3pe91Ykb')">🔱 АТЛАНТИДА</button>
-        <button class="team-btn" onclick="downloadBackup()" style="border-color: rgba(34, 197, 94, 0.4); color: var(--color-success);" title="Сохранить всю базу турниров на компьютер">💾 Бэкап базы</button>
     </div>
 
     <div class="tabs">
@@ -270,6 +269,7 @@
                 <label for="dateTo" style="font-size: 13px; color: var(--color-text-secondary);">По</label>
                 <input type="date" id="dateTo" onchange="handleFilterChange()">
                 <button class="btn-secondary" onclick="resetFilters()">Сбросить</button>
+                <button class="btn-secondary" onclick="downloadBackup()" style="margin-left: auto; border-color: rgba(34, 197, 94, 0.4); color: var(--color-success);" title="Сохранить всю базу турниров на компьютер">💾 Бэкап базы</button>
             </div>
             
             <div class="input-group" style="margin-bottom: 0; padding-top: 14px; border-top: 1px solid var(--color-border);">
